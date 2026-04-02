@@ -10,22 +10,31 @@ function LoginContent() {
   const [error, setError] = useState('')
 
   const handleGoogleLogin = async () => {
+    setLoading(true)
+    setError('')
     try {
-      setLoading(true)
-      setError('')
       document.cookie = `oauth_next=${encodeURIComponent(redirect)}; path=/; max-age=300; SameSite=Lax`
       const supabase = createClient()
-      const { error: err } = await supabase.auth.signInWithOAuth({
+      const { data, error: err } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
+          skipBrowserRedirect: true,
           redirectTo: `${window.location.origin}/auth/callback`,
         },
       })
-      if (err) throw err
-      // signInWithOAuth auto-redirects the browser — code below won't run on success
+      if (err) {
+        setError(`Lỗi Supabase: ${err.message} (${err.status ?? ''})`)
+        setLoading(false)
+        return
+      }
+      if (!data?.url) {
+        setError('Không nhận được URL từ Supabase. Kiểm tra Google OAuth trong Supabase Dashboard.')
+        setLoading(false)
+        return
+      }
+      window.location.assign(data.url)
     } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : JSON.stringify(e)
-      setError(msg || 'Không thể kết nối Google. Kiểm tra lại cấu hình Supabase.')
+      setError(e instanceof Error ? e.message : JSON.stringify(e))
       setLoading(false)
     }
   }
