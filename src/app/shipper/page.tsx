@@ -1,10 +1,11 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { MapPin, Phone, Navigation, CheckCircle2, DollarSign, Package, RefreshCw, Bike } from 'lucide-react'
+import { MapPin, Phone, Navigation, CheckCircle2, DollarSign, Package, RefreshCw, Bike, ArrowLeft, Shield } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useAuthStore } from '@/store/auth'
 import { formatCurrency } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
 
 interface AvailableOrder {
   id: string
@@ -25,6 +26,126 @@ interface ActiveOrder extends AvailableOrder {
 
 type ShipperStatus = 'offline' | 'online'
 
+const VEHICLE_TYPES = ['Xe máy', 'Xe đạp điện', 'Xe tải nhỏ']
+
+function ShipperRegisterForm({
+  userId,
+  userName,
+  onDone,
+  onBack,
+}: {
+  userId: string
+  userName: string
+  onDone: () => void
+  onBack: () => void
+}) {
+  const [vehicle, setVehicle] = useState(VEHICLE_TYPES[0])
+  const [plate, setPlate] = useState('')
+  const [agreed, setAgreed] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
+
+  const handleSubmit = async () => {
+    if (!plate.trim()) { setError('Vui lòng nhập biển số xe'); return }
+    if (!agreed) { setError('Vui lòng đồng ý với điều khoản'); return }
+    setError('')
+    setSaving(true)
+    const supabase = createClient()
+    await supabase.from('users').update({ role: 'driver' }).eq('id', userId)
+    setSaving(false)
+    onDone()
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-900 text-white pb-10">
+      <div className="px-4 pt-12 pb-8">
+        <button onClick={onBack} className="mb-4 p-1 hover:bg-white/10 rounded-full transition-colors">
+          <ArrowLeft size={20} />
+        </button>
+        <div className="text-4xl mb-2">🛵</div>
+        <h1 className="text-2xl font-bold">Đăng ký shipper</h1>
+        <p className="text-sm text-gray-400 mt-1">Giao hàng và kiếm thêm thu nhập</p>
+      </div>
+
+      <div className="max-w-lg mx-auto px-4 space-y-4">
+        {/* Benefits */}
+        <div className="bg-gray-800 rounded-2xl p-4 space-y-2">
+          {[
+            { icon: '💰', text: 'Nhận phí giao hàng cho mỗi đơn' },
+            { icon: '🕐', text: 'Tự quyết định giờ làm việc' },
+            { icon: '📱', text: 'Nhận đơn realtime qua app' },
+            { icon: '🗺️', text: 'Khu vực Hoài Đức & Xuân Lộc' },
+          ].map(({ icon, text }) => (
+            <div key={text} className="flex items-center gap-3 text-sm">
+              <span>{icon}</span>
+              <span className="text-gray-300">{text}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Form */}
+        <div className="bg-gray-800 rounded-2xl p-4 space-y-4">
+          <div>
+            <label className="block text-xs font-medium text-gray-400 mb-1">Họ tên</label>
+            <p className="text-sm font-medium text-white">{userName || '—'}</p>
+          </div>
+
+          <div>
+            <label className="block text-xs font-medium text-gray-400 mb-2">Loại phương tiện</label>
+            <div className="flex gap-2 flex-wrap">
+              {VEHICLE_TYPES.map((v) => (
+                <button
+                  key={v}
+                  onClick={() => setVehicle(v)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                    vehicle === v ? 'bg-orange-500 text-white border-orange-500' : 'border-gray-600 text-gray-300 hover:border-orange-400'
+                  }`}
+                >
+                  {v}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-medium text-gray-400 mb-1.5">Biển số xe *</label>
+            <input
+              type="text"
+              className="w-full bg-gray-700 rounded-xl border border-gray-600 px-3 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 uppercase"
+              placeholder="29A-12345"
+              value={plate}
+              onChange={(e) => setPlate(e.target.value.toUpperCase())}
+            />
+          </div>
+
+          <label className="flex items-start gap-3 cursor-pointer">
+            <div
+              onClick={() => setAgreed(!agreed)}
+              className={`mt-0.5 w-5 h-5 rounded flex items-center justify-center flex-shrink-0 border transition-colors ${agreed ? 'bg-orange-500 border-orange-500' : 'border-gray-500'}`}
+            >
+              {agreed && <CheckCircle2 size={12} className="text-white" />}
+            </div>
+            <span className="text-xs text-gray-400 leading-relaxed">
+              Tôi đồng ý với <span className="text-orange-400">Điều khoản shipper</span> và xác nhận thông tin xe của tôi là chính xác
+            </span>
+          </label>
+        </div>
+
+        {error && <p className="text-sm text-red-400 text-center">{error}</p>}
+
+        <Button size="lg" className="w-full bg-orange-500 hover:bg-orange-600 text-white" loading={saving} onClick={handleSubmit}>
+          Đăng ký ngay
+        </Button>
+
+        <div className="flex items-center gap-2 bg-gray-800 rounded-xl p-3">
+          <Shield size={14} className="text-green-400 flex-shrink-0" />
+          <p className="text-xs text-gray-400">Thông tin của bạn được bảo mật và chỉ dùng để xác minh danh tính</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function ShipperPage() {
   const router = useRouter()
   const { user, loading: authLoading } = useAuthStore()
@@ -36,13 +157,27 @@ export default function ShipperPage() {
   const [delivering, setDelivering] = useState(false)
   const [todayEarnings, setTodayEarnings] = useState(0)
   const [todayCount, setTodayCount] = useState(0)
+  const [userRole, setUserRole] = useState<string | null>(null)
+  const [userName, setUserName] = useState('')
 
   useEffect(() => {
     if (authLoading) return
     if (!user) { router.push('/auth/login?redirect=/shipper'); return }
-    setLoading(false)
 
-    // Check if shipper has an active order
+    // Check user role
+    const supabase = createClient()
+    supabase.from('users').select('role, name').eq('id', user.id).single().then(({ data }) => {
+      setUserRole(data?.role || 'customer')
+      setUserName(data?.name || '')
+      if (data?.role === 'driver') setLoading(false)
+      else setLoading(false)
+    })
+  }, [authLoading, user, router])
+
+  // Original loading effect replaced above — keep data loading here
+  useEffect(() => {
+    if (!user || userRole !== 'driver') return
+
     const loadActive = async () => {
       const supabase = createClient()
       const { data } = await supabase
@@ -72,7 +207,7 @@ export default function ShipperPage() {
       }
     }
     loadActive()
-  }, [user, router])
+  }, [user, userRole])
 
   // Load available orders when online
   useEffect(() => {
@@ -145,6 +280,17 @@ export default function ShipperPage() {
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="w-10 h-10 border-4 border-orange-500 border-t-transparent rounded-full animate-spin" />
       </div>
+    )
+  }
+
+  if (userRole && userRole !== 'driver') {
+    return (
+      <ShipperRegisterForm
+        userId={user!.id}
+        userName={userName}
+        onDone={() => setUserRole('driver')}
+        onBack={() => router.push('/')}
+      />
     )
   }
 

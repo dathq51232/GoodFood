@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { MapPin, Phone, ChevronRight, LogOut, Store, Bike, Settings } from 'lucide-react'
 import { BottomNav } from '@/components/layout/BottomNav'
+import { DesktopNav } from '@/components/layout/DesktopNav'
 import { useAuthStore } from '@/store/auth'
 import { createClient } from '@/lib/supabase/client'
 
@@ -36,7 +37,9 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
-      <div className="max-w-lg mx-auto px-4 pt-12 space-y-4">
+      <DesktopNav />
+      <div className="md:pl-56">
+      <div className="max-w-2xl mx-auto px-4 pt-12 space-y-4">
         {/* User card */}
         <div className="bg-gradient-to-br from-orange-500 to-red-400 rounded-2xl p-6 text-white">
           <div className="flex items-center gap-4">
@@ -74,6 +77,7 @@ export default function ProfilePage() {
         <p className="text-center text-xs text-gray-400 pb-2">
           Hoài Đức Express v1.0 · Phục vụ khu vực Hoài Đức & Xuân Lộc
         </p>
+      </div>
       </div>
       <BottomNav />
     </div>

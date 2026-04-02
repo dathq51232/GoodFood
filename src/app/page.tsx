@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { Package, ChevronRight } from 'lucide-react'
 import { Header } from '@/components/layout/Header'
 import { BottomNav } from '@/components/layout/BottomNav'
+import { DesktopNav } from '@/components/layout/DesktopNav'
 import { RestaurantCard } from '@/components/customer/RestaurantCard'
 import { CategoryFilter } from '@/components/customer/CategoryFilter'
 import { getRestaurants } from '@/lib/api/restaurants'
@@ -30,9 +31,11 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
+      <DesktopNav />
+      <div className="md:pl-56">
       <Header />
 
-      <main className="max-w-lg mx-auto px-4 pt-4 space-y-5">
+      <main className="max-w-2xl mx-auto px-4 pt-4 space-y-5">
         {/* Banner carousel */}
         <div className="flex gap-3 overflow-x-auto scrollbar-hide -mx-4 px-4">
           {BANNERS.map((b) => (
@@ -94,7 +97,7 @@ export default function HomePage() {
               <p>Không có quán nào trong danh mục này</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {restaurants.map((r) => (
                 <RestaurantCard key={r.id} restaurant={r} />
               ))}
@@ -103,6 +106,7 @@ export default function HomePage() {
         </section>
       </main>
 
+      </div>
       <BottomNav />
     </div>
   )

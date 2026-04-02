@@ -1,11 +1,12 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { CheckCircle2, Clock, ChefHat, X, TrendingUp, ShoppingBag, DollarSign, Star, RefreshCw } from 'lucide-react'
+import { CheckCircle2, Clock, ChefHat, X, TrendingUp, ShoppingBag, DollarSign, Star, RefreshCw, ArrowLeft } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useAuthStore } from '@/store/auth'
 import { formatCurrency, getStatusLabel, getStatusColor } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 
 interface OrderItem { name: string; price: number; quantity: number }
 interface Order {
@@ -28,6 +29,143 @@ interface Restaurant {
 }
 
 type Tab = 'orders' | 'stats'
+
+const CATEGORIES = ['Phở & Bún', 'Cơm', 'Gà & Fast Food', 'Bánh mì', 'Đồ uống', 'Lẩu & BBQ', 'Hải sản', 'Khác']
+
+function RestaurantRegisterForm({
+  userId,
+  onDone,
+  onBack,
+}: {
+  userId: string
+  onDone: (r: { id: string; name: string; is_open: boolean; rating: number }) => void
+  onBack: () => void
+}) {
+  const [form, setForm] = useState({
+    name: '', address: '', phone: '', category: CATEGORIES[0],
+    description: '', delivery_fee: '15000', min_order: '50000',
+  })
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
+
+  const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }))
+
+  const handleSubmit = async () => {
+    if (!form.name.trim()) { setError('Vui lòng nhập tên nhà hàng'); return }
+    if (!form.address.trim()) { setError('Vui lòng nhập địa chỉ'); return }
+    if (!form.phone.trim()) { setError('Vui lòng nhập số điện thoại'); return }
+    setError('')
+    setSaving(true)
+    const supabase = createClient()
+    const { data, error: err } = await supabase
+      .from('restaurants')
+      .insert({
+        owner_id: userId,
+        name: form.name.trim(),
+        address: form.address.trim(),
+        phone: form.phone.trim(),
+        category: form.category,
+        description: form.description.trim() || null,
+        delivery_fee: Number(form.delivery_fee) || 15000,
+        min_order: Number(form.min_order) || 50000,
+        delivery_time: 30,
+        is_open: false,
+        open_time: '07:00',
+        close_time: '22:00',
+        lat: 21.05,
+        lng: 105.77,
+        rating: 0,
+        total_reviews: 0,
+      })
+      .select('id, name, is_open, rating')
+      .single()
+    setSaving(false)
+    if (err) { setError('Lỗi tạo nhà hàng: ' + err.message); return }
+    if (data) onDone(data)
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 pb-10">
+      <div className="bg-gradient-to-br from-orange-500 to-red-400 px-4 pt-12 pb-8 text-white">
+        <button onClick={onBack} className="mb-4 p-1 hover:bg-white/20 rounded-full transition-colors">
+          <ArrowLeft size={20} />
+        </button>
+        <div className="text-4xl mb-2">🏪</div>
+        <h1 className="text-2xl font-bold">Đăng ký nhà hàng</h1>
+        <p className="text-sm opacity-80 mt-1">Điền thông tin để bắt đầu nhận đơn</p>
+      </div>
+
+      <div className="max-w-lg mx-auto px-4 pt-5 space-y-4">
+        <div className="bg-white rounded-2xl border border-gray-100 p-4 space-y-3">
+          <h2 className="font-semibold text-sm text-gray-700">Thông tin cơ bản</h2>
+          <Input label="Tên nhà hàng *" placeholder="Quán Phở Bà Năm" value={form.name} onChange={(e) => set('name', e.target.value)} />
+          <Input label="Địa chỉ *" placeholder="123 Đường Hoài Đức, Hà Nội" value={form.address} onChange={(e) => set('address', e.target.value)} />
+          <Input label="Số điện thoại *" type="tel" placeholder="0912 345 678" value={form.phone} onChange={(e) => set('phone', e.target.value)} />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Danh mục</label>
+            <div className="flex flex-wrap gap-2">
+              {CATEGORIES.map((c) => (
+                <button
+                  key={c}
+                  onClick={() => set('category', c)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                    form.category === c ? 'bg-orange-500 text-white border-orange-500' : 'border-gray-200 text-gray-600 hover:border-orange-300'
+                  }`}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">Mô tả (tuỳ chọn)</label>
+            <textarea
+              rows={2}
+              className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
+              placeholder="Mô tả ngắn về nhà hàng..."
+              value={form.description}
+              onChange={(e) => set('description', e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="bg-white rounded-2xl border border-gray-100 p-4 space-y-3">
+          <h2 className="font-semibold text-sm text-gray-700">Cài đặt giao hàng</h2>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Phí giao hàng (đ)</label>
+              <input
+                type="number"
+                className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                value={form.delivery_fee}
+                onChange={(e) => set('delivery_fee', e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Đơn tối thiểu (đ)</label>
+              <input
+                type="number"
+                className="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                value={form.min_order}
+                onChange={(e) => set('min_order', e.target.value)}
+              />
+            </div>
+          </div>
+        </div>
+
+        {error && <p className="text-sm text-red-600 text-center">{error}</p>}
+
+        <Button size="lg" className="w-full" loading={saving} onClick={handleSubmit}>
+          Tạo nhà hàng
+        </Button>
+
+        <p className="text-xs text-center text-gray-400 pb-2">
+          Sau khi tạo, admin sẽ xem xét và kích hoạt nhà hàng của bạn
+        </p>
+      </div>
+    </div>
+  )
+}
 
 export default function RestaurantAdminPage() {
   const router = useRouter()
@@ -133,14 +271,7 @@ export default function RestaurantAdminPage() {
   }
 
   if (!restaurant) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center gap-4 px-6 text-center">
-        <p className="text-5xl">🏪</p>
-        <h2 className="font-bold text-xl text-gray-900">Chưa có nhà hàng</h2>
-        <p className="text-sm text-gray-500">Bạn chưa đăng ký nhà hàng nào. Liên hệ admin để được thiết lập.</p>
-        <Button onClick={() => router.push('/')} variant="outline">Về trang chủ</Button>
-      </div>
-    )
+    return <RestaurantRegisterForm userId={user!.id} onDone={(r) => setRestaurant(r)} onBack={() => router.push('/')} />
   }
 
   return (
