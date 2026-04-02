@@ -15,13 +15,15 @@ export async function POST(req: NextRequest) {
     if (!delivery_address?.trim()) return NextResponse.json({ error: 'Thiếu địa chỉ giao hàng' }, { status: 400 })
 
     // Validate menu items & compute subtotal
+    type MenuItemRow = { id: string; price: number; name: string; is_available: boolean }
     const itemIds = items.map((i: { menu_item_id: string }) => i.menu_item_id)
-    const { data: menuItems, error: menuErr } = await supabase
+    const { data: rawMenuItems, error: menuErr } = await supabase
       .from('menu_items')
       .select('id, price, name, is_available')
       .in('id', itemIds)
+    const menuItems = (rawMenuItems ?? []) as MenuItemRow[]
 
-    if (menuErr || !menuItems?.length) return NextResponse.json({ error: 'Không thể lấy thông tin món' }, { status: 500 })
+    if (menuErr || !menuItems.length) return NextResponse.json({ error: 'Không thể lấy thông tin món' }, { status: 500 })
 
     let subtotal = 0
     for (const item of items as { menu_item_id: string; quantity: number }[]) {
