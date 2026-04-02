@@ -23,12 +23,21 @@ export async function GET(request: NextRequest) {
 
       if (!existing) {
         const meta = data.user.user_metadata
-        await supabase.from('users').insert({
+        const { error: insertErr } = await supabase.from('users').insert({
           id: data.user.id,
-          name: meta?.full_name || meta?.name || 'Người dùng',
-          phone: data.user.phone || null,
+          name: meta?.full_name || meta?.name || meta?.email?.split('@')[0] || 'Người dùng',
+          phone: data.user.phone || '',
           role: 'customer',
         })
+        // If insert fails (e.g. phone NOT NULL), try upsert without phone
+        if (insertErr) {
+          await supabase.from('users').upsert({
+            id: data.user.id,
+            name: meta?.full_name || meta?.name || 'Người dùng',
+            phone: '',
+            role: 'customer',
+          }, { onConflict: 'id' })
+        }
       }
     }
   }
