@@ -15,17 +15,17 @@ function LoginContent() {
       setError('')
       document.cookie = `oauth_next=${encodeURIComponent(redirect)}; path=/; max-age=300; SameSite=Lax`
       const supabase = createClient()
-      const { data, error: err } = await supabase.auth.signInWithOAuth({
+      const { error: err } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          skipBrowserRedirect: true,
           redirectTo: `${window.location.origin}/auth/callback`,
         },
       })
       if (err) throw err
-      if (data?.url) window.location.assign(data.url)
+      // signInWithOAuth auto-redirects the browser — code below won't run on success
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : 'Đăng nhập thất bại')
+      const msg = e instanceof Error ? e.message : JSON.stringify(e)
+      setError(msg || 'Không thể kết nối Google. Kiểm tra lại cấu hình Supabase.')
       setLoading(false)
     }
   }
