@@ -1,15 +1,14 @@
 'use client'
-export const dynamic = 'force-dynamic'
 import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Phone, MessageSquare, ArrowLeft, CheckCircle2 } from 'lucide-react'
+import { Phone, ArrowLeft, CheckCircle2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
 type Step = 'phone' | 'otp' | 'name'
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const redirect = searchParams.get('redirect') || '/'
@@ -93,7 +92,6 @@ export default function LoginPage() {
       setError('Mã OTP không đúng hoặc đã hết hạn')
       return
     }
-    // Check if user has a name in our users table
     const { data: userData } = await supabase
       .from('users')
       .select('name')
@@ -248,5 +246,13 @@ export default function LoginPage() {
         )}
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginContent />
+    </Suspense>
   )
 }
