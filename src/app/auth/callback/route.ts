@@ -4,7 +4,10 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
-  const next = searchParams.get('next') ?? '/'
+
+  // Read redirect destination from cookie (set before OAuth redirect to avoid query-param whitelist issues)
+  const oauthNext = request.cookies.get('oauth_next')?.value
+  const next = oauthNext ? decodeURIComponent(oauthNext) : (searchParams.get('next') ?? '/')
 
   if (code) {
     const supabase = await createClient()
@@ -30,5 +33,7 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  return NextResponse.redirect(`${origin}${next}`)
+  const response = NextResponse.redirect(`${origin}${next}`)
+  response.cookies.delete('oauth_next')
+  return response
 }

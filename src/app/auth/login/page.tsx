@@ -38,12 +38,14 @@ function LoginContent() {
     try {
       setLoading(true)
       setError('')
+      // Store redirect destination in a short-lived cookie (query params in redirectTo cause Supabase whitelist issues)
+      document.cookie = `oauth_next=${encodeURIComponent(redirect)}; path=/; max-age=300; SameSite=Lax`
       const supabase = createClient()
       const { data, error: err } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           skipBrowserRedirect: true,
-          redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirect)}`,
+          redirectTo: `${window.location.origin}/auth/callback`,
         },
       })
       if (err) throw err
