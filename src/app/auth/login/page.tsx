@@ -101,7 +101,7 @@ function LoginContent() {
           <div className="login-header">
             <span className="login-icon">🚀</span>
             <div className="login-title">GoodFood</div>
-            <div className="login-sub">Giao hàng nhanh · Đức Tài đến ngã ba Ông Đồn</div>
+            <div className="login-sub">Giao hàng nhanh · Đức Tài · Trà Tân · Xuân Lộc · Ông Đồn · Lâm Đồng</div>
           </div>
 
           {/* Card */}

@@ -68,7 +68,7 @@ export function DesktopNav() {
         )}
       </div>
 
-      <div className="px-3 text-[11px] text-gray-400">v1.0 · Đức Tài đến ngã ba Ông Đồn</div>
+      <div className="px-3 text-[11px] text-gray-400">v1.0 · Đức Tài · Trà Tân · Xuân Lộc · Ông Đồn · Lâm Đồng</div>
     </nav>
   )
 }

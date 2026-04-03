@@ -74,7 +74,7 @@ function ShipperRegisterForm({
             { icon: '💰', text: 'Nhận phí giao hàng cho mỗi đơn' },
             { icon: '🕐', text: 'Tự quyết định giờ làm việc' },
             { icon: '📱', text: 'Nhận đơn realtime qua app' },
-            { icon: '🗺️', text: 'Đức Tài đến ngã ba Ông Đồn' },
+            { icon: '🗺️', text: 'Đức Tài · Trà Tân · Xuân Lộc · Ông Đồn · Lâm Đồng' },
           ].map(({ icon, text }) => (
             <div key={text} className="flex items-center gap-3 text-sm">
               <span>{icon}</span>

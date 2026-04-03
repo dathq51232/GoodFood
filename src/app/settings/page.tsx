@@ -180,7 +180,7 @@ export default function SettingsPage() {
             </div>
 
             <p className="text-center text-xs text-gray-400 pb-2">
-              GoodFood v1.0 · Phục vụ khu vực Đức Tài đến ngã ba Ông Đồn
+              GoodFood v1.0 · Phục vụ khu vực Đức Tài · Trà Tân · Xuân Lộc · Ông Đồn · Lâm Đồng
             </p>
           </div>
         </div>

@@ -42,7 +42,7 @@ export default function DeliveryPage() {
         {/* Header */}
         <div className="bg-gradient-to-br from-blue-600 to-blue-400 text-white px-4 pt-12 pb-6">
           <h1 className="text-2xl font-bold">Giao hàng</h1>
-          <p className="text-sm opacity-80 mt-1">Gửi bưu kiện trong khu vực Đức Tài đến ngã ba Ông Đồn</p>
+          <p className="text-sm opacity-80 mt-1">Gửi bưu kiện trong khu vực Đức Tài · Trà Tân · Xuân Lộc · Ông Đồn · Lâm Đồng</p>
           <div className="flex items-center gap-4 mt-4">
             <div className="flex items-center gap-1.5 text-sm">
               <Clock size={14} />

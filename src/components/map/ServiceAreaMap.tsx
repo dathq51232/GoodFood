@@ -26,8 +26,8 @@ export function ServiceAreaMap() {
       })
 
       const map = L.map(mapRef.current!, {
-        center: [20.974, 105.715],
-        zoom: 14,
+        center: [20.972, 105.714],
+        zoom: 13,
         zoomControl: false,
         scrollWheelZoom: false,
         dragging: false,
@@ -38,26 +38,36 @@ export function ServiceAreaMap() {
         maxZoom: 19,
       }).addTo(map)
 
-      // Service area polygon
+      // Service area polygon covering all villages
       L.polygon(
         [
-          [20.982, 105.700],
-          [20.982, 105.730],
-          [20.965, 105.730],
-          [20.965, 105.700],
+          [20.985, 105.695],
+          [20.985, 105.735],
+          [20.960, 105.735],
+          [20.960, 105.695],
         ],
-        { color: '#f97316', fillColor: '#f97316', fillOpacity: 0.12, weight: 2.5 }
+        { color: '#f97316', fillColor: '#f97316', fillOpacity: 0.10, weight: 2.5 }
       ).addTo(map)
 
-      // Start marker: Đức Tài
-      L.marker([20.978, 105.703])
-        .addTo(map)
-        .bindPopup('<b>Đức Tài</b><br>Điểm xuất phát', { closeButton: false })
+      // Village markers
+      const villages: [number, number, string, string][] = [
+        [20.980, 105.700, 'Đức Tài', '🏠'],
+        [20.975, 105.710, 'Trà Tân', '🌿'],
+        [20.968, 105.720, 'Xuân Lộc · Ông Đồn', '⛺'],
+        [20.963, 105.728, 'Lâm Đồng (Bình Thuận cũ)', '📍'],
+      ]
 
-      // End marker: Ngã ba Ông Đồn
-      L.marker([20.967, 105.725])
-        .addTo(map)
-        .bindPopup('<b>Ngã ba Ông Đồn</b><br>Điểm cuối', { closeButton: false })
+      villages.forEach(([lat, lng, name, icon]) => {
+        const divIcon = L.divIcon({
+          html: `<div style="background:white;border:2px solid #f97316;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:0 2px 6px rgba(0,0,0,0.2)">${icon}</div>`,
+          iconSize: [28, 28],
+          iconAnchor: [14, 14],
+          className: '',
+        })
+        L.marker([lat, lng], { icon: divIcon })
+          .addTo(map)
+          .bindTooltip(`<b>${name}</b>`, { permanent: false, direction: 'top', offset: [0, -16] })
+      })
 
       mapInstanceRef.current = map
     })

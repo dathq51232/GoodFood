@@ -41,17 +41,17 @@ export function MapPicker({ onSelect, initialAddress }: MapPickerProps) {
         maxZoom: 19,
       }).addTo(map)
 
-      // Service area highlight (rough rectangle around Đức Tài → ngã ba Ông Đồn)
+      // Service area highlight covering all villages
       const servicePolygon = L.polygon(
         [
-          [20.982, 105.700],
-          [20.982, 105.730],
-          [20.965, 105.730],
-          [20.965, 105.700],
+          [20.985, 105.695],
+          [20.985, 105.735],
+          [20.960, 105.735],
+          [20.960, 105.695],
         ],
         { color: '#f97316', fillColor: '#f97316', fillOpacity: 0.07, weight: 2, dashArray: '6 4' }
       ).addTo(map)
-      servicePolygon.bindTooltip('Khu vực phục vụ: Đức Tài → ngã ba Ông Đồn', {
+      servicePolygon.bindTooltip('Khu vực phục vụ: Đức Tài · Trà Tân · Xuân Lộc · Ông Đồn · Lâm Đồng', {
         permanent: false,
         direction: 'top',
       })

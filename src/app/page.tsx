@@ -19,7 +19,7 @@ const ServiceAreaMap = dynamic(
 const BANNERS = [
   { id: 1, title: 'Miễn phí giao hàng', subtitle: 'Đơn đầu tiên của bạn', bg: 'from-orange-500 to-red-500', icon: '🎉' },
   { id: 2, title: 'Giao hàng nhanh', subtitle: 'Trong vòng 30 phút', bg: 'from-green-500 to-teal-500', icon: '⚡' },
-  { id: 3, title: 'Đức Tài đến ngã ba Ông Đồn', subtitle: 'Phục vụ tận nơi', bg: 'from-blue-500 to-purple-500', icon: '📍' },
+  { id: 3, title: 'Đức Tài · Trà Tân · Xuân Lộc · Ông Đồn · Lâm Đồng', subtitle: 'Phục vụ tận nơi', bg: 'from-blue-500 to-purple-500', icon: '📍' },
 ]
 
 export default function HomePage() {
