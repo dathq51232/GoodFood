@@ -3,7 +3,7 @@ import './globals.css'
 import { AuthProvider } from '@/components/layout/AuthProvider'
 
 export const metadata: Metadata = {
-  title: 'Hoài Đức Express — Giao hàng & Đồ ăn',
+  title: 'GoodFood — Giao hàng & Đồ ăn',
   description: 'Đặt đồ ăn và giao hàng nhanh tại khu vực Hoài Đức, Xuân Lộc',
 }
 

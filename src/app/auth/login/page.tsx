@@ -100,8 +100,8 @@ function LoginContent() {
           {/* Header */}
           <div className="login-header">
             <span className="login-icon">🚀</span>
-            <div className="login-title">Hoài Đức Express</div>
-            <div className="login-sub">Giao hàng nhanh · Khu vực Hoài Đức &amp; Xuân Lộc</div>
+            <div className="login-title">GoodFood</div>
+            <div className="login-sub">Giao hàng nhanh · Đức Tài đến ngã ba Ông Đồn</div>
           </div>
 
           {/* Card */}
@@ -141,7 +141,7 @@ function LoginContent() {
 
           <div className="footer-text">
             Bằng cách tiếp tục, bạn đồng ý với<br />
-            <span style={{ color: '#f0b429', fontWeight: 700 }}>Điều khoản dịch vụ</span> của Hoài Đức Express
+            <span style={{ color: '#f0b429', fontWeight: 700 }}>Điều khoản dịch vụ</span> của GoodFood
           </div>
         </div>
 

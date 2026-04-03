@@ -155,7 +155,7 @@ export default function OrderDetailPage({
             <div className="text-center">
               <div className="text-6xl mb-2">🎉</div>
               <h1 className="text-2xl font-bold">Giao hàng thành công!</h1>
-              <p className="text-sm opacity-80 mt-1">Cảm ơn bạn đã tin tưởng Hoài Đức Express</p>
+              <p className="text-sm opacity-80 mt-1">Cảm ơn bạn đã tin tưởng GoodFood</p>
             </div>
           ) : (
             <>
@@ -229,7 +229,7 @@ export default function OrderDetailPage({
                   <p className="font-semibold text-gray-900">
                     {(order?.driver as { name?: string } | null)?.name || 'Đang tìm shipper...'}
                   </p>
-                  <p className="text-xs text-gray-500">Xe máy · Khu vực Hoài Đức</p>
+                  <p className="text-xs text-gray-500">Xe máy · Đức Tài</p>
                 </div>
                 {(order?.driver as { phone?: string } | null)?.phone && (
                   <a href={`tel:${(order?.driver as { phone?: string }).phone}`}

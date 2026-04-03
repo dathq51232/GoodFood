@@ -74,7 +74,7 @@ function ShipperRegisterForm({
             { icon: '💰', text: 'Nhận phí giao hàng cho mỗi đơn' },
             { icon: '🕐', text: 'Tự quyết định giờ làm việc' },
             { icon: '📱', text: 'Nhận đơn realtime qua app' },
-            { icon: '🗺️', text: 'Khu vực Hoài Đức & Xuân Lộc' },
+            { icon: '🗺️', text: 'Đức Tài đến ngã ba Ông Đồn' },
           ].map(({ icon, text }) => (
             <div key={text} className="flex items-center gap-3 text-sm">
               <span>{icon}</span>
@@ -301,7 +301,7 @@ export default function ShipperPage() {
         <div className="flex items-center justify-between mb-4">
           <div>
             <h1 className="font-bold text-xl">Shipper</h1>
-            <p className="text-sm text-gray-400">Hoài Đức Express</p>
+            <p className="text-sm text-gray-400">GoodFood</p>
           </div>
           <div className="flex gap-1.5">
             {(['offline', 'online'] as ShipperStatus[]).map((s) => (

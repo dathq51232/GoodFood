@@ -19,8 +19,8 @@ export function DesktopNav() {
   return (
     <nav className="hidden md:flex flex-col fixed left-0 top-0 h-full w-56 bg-white border-r border-gray-100 z-40 py-6 px-3">
       <div className="px-3 mb-8">
-        <div className="text-orange-500 font-bold text-lg leading-tight">Hoài Đức Express</div>
-        <div className="text-xs text-gray-400 mt-0.5">Giao hàng nhanh · Khu vực Hoài Đức</div>
+        <div className="text-orange-500 font-bold text-lg leading-tight">GoodFood</div>
+        <div className="text-xs text-gray-400 mt-0.5">Giao hàng nhanh · Đức Tài</div>
       </div>
 
       <div className="space-y-0.5 flex-1">
@@ -68,7 +68,7 @@ export function DesktopNav() {
         )}
       </div>
 
-      <div className="px-3 text-[11px] text-gray-400">v1.0 · Hoài Đức & Xuân Lộc</div>
+      <div className="px-3 text-[11px] text-gray-400">v1.0 · Đức Tài đến ngã ba Ông Đồn</div>
     </nav>
   )
 }

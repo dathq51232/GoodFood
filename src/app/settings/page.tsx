@@ -180,7 +180,7 @@ export default function SettingsPage() {
             </div>
 
             <p className="text-center text-xs text-gray-400 pb-2">
-              Hoài Đức Express v1.0 · Phục vụ khu vực Hoài Đức & Xuân Lộc
+              GoodFood v1.0 · Phục vụ khu vực Đức Tài đến ngã ba Ông Đồn
             </p>
           </div>
         </div>

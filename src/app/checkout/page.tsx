@@ -1,19 +1,38 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, MapPin, Minus, Plus, Trash2, CreditCard, Banknote, AlertCircle } from 'lucide-react'
+import { ArrowLeft, MapPin, Minus, Plus, Trash2, CreditCard, Banknote, AlertCircle, Map } from 'lucide-react'
 import { useCartStore } from '@/store/cart'
 import { useAuthStore } from '@/store/auth'
 import { formatCurrency } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
+const MapPicker = dynamic(
+  () => import('@/components/map/MapPicker').then((m) => m.MapPicker),
+  { ssr: false, loading: () => <div className="h-52 rounded-xl bg-gray-100 animate-pulse" /> }
+)
+
+// Leaflet CSS
+const LeafletCSS = () => {
+  useEffect(() => {
+    const link = document.createElement('link')
+    link.rel = 'stylesheet'
+    link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
+    document.head.appendChild(link)
+    return () => { document.head.removeChild(link) }
+  }, [])
+  return null
+}
+
 export default function CheckoutPage() {
   const router = useRouter()
   const { items, restaurant, updateQuantity, total, clearCart } = useCartStore()
   const { user } = useAuthStore()
   const [address, setAddress] = useState('')
+  const [showMap, setShowMap] = useState(false)
   const [note, setNote] = useState('')
   const [payMethod, setPayMethod] = useState<'cash' | 'transfer'>('cash')
   const [loading, setLoading] = useState(false)
@@ -104,15 +123,34 @@ export default function CheckoutPage() {
 
           {/* Delivery address */}
           <div className="bg-white rounded-2xl p-4 border border-gray-100">
-            <div className="flex items-center gap-2 mb-3">
-              <MapPin size={16} className="text-orange-500" />
-              <p className="font-semibold text-sm">Địa chỉ giao hàng</p>
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <MapPin size={16} className="text-orange-500" />
+                <p className="font-semibold text-sm">Địa chỉ giao hàng</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowMap((v) => !v)}
+                className="flex items-center gap-1 text-xs text-orange-500 font-medium"
+              >
+                <Map size={13} />
+                {showMap ? 'Ẩn bản đồ' : 'Chọn trên bản đồ'}
+              </button>
             </div>
             <Input
               placeholder="Số nhà, tên đường, khu vực..."
               value={address}
               onChange={(e) => setAddress(e.target.value)}
             />
+            {showMap && (
+              <div className="mt-3">
+                <LeafletCSS />
+                <MapPicker
+                  initialAddress={address}
+                  onSelect={(addr) => setAddress(addr)}
+                />
+              </div>
+            )}
           </div>
 
           {/* Items */}

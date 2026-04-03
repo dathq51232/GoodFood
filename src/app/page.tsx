@@ -1,7 +1,8 @@
 'use client'
 import { useState, useEffect } from 'react'
+import dynamic from 'next/dynamic'
 import Link from 'next/link'
-import { Package, ChevronRight } from 'lucide-react'
+import { Package } from 'lucide-react'
 import { Header } from '@/components/layout/Header'
 import { BottomNav } from '@/components/layout/BottomNav'
 import { DesktopNav } from '@/components/layout/DesktopNav'
@@ -10,10 +11,15 @@ import { CategoryFilter } from '@/components/customer/CategoryFilter'
 import { getRestaurants } from '@/lib/api/restaurants'
 import type { Restaurant } from '@/types/database'
 
+const ServiceAreaMap = dynamic(
+  () => import('@/components/map/ServiceAreaMap').then((m) => m.ServiceAreaMap),
+  { ssr: false, loading: () => <div className="h-44 rounded-2xl bg-gray-100 animate-pulse" /> }
+)
+
 const BANNERS = [
   { id: 1, title: 'Miễn phí giao hàng', subtitle: 'Đơn đầu tiên của bạn', bg: 'from-orange-500 to-red-500', icon: '🎉' },
   { id: 2, title: 'Giao hàng nhanh', subtitle: 'Trong vòng 30 phút', bg: 'from-green-500 to-teal-500', icon: '⚡' },
-  { id: 3, title: 'Hoài Đức & Xuân Lộc', subtitle: 'Phục vụ tận nơi', bg: 'from-blue-500 to-purple-500', icon: '📍' },
+  { id: 3, title: 'Đức Tài đến ngã ba Ông Đồn', subtitle: 'Phục vụ tận nơi', bg: 'from-blue-500 to-purple-500', icon: '📍' },
 ]
 
 export default function HomePage() {
@@ -72,6 +78,9 @@ export default function HomePage() {
             </div>
           </Link>
         </div>
+
+        {/* Service area map */}
+        <ServiceAreaMap />
 
         {/* Categories */}
         <CategoryFilter selected={category} onChange={setCategory} />
