@@ -1,9 +1,10 @@
 import crypto from 'crypto'
 
 // ─── Config ────────────────────────────────────────────────────────────────
-export const SEPAY_MERCHANT_ID = process.env.SEPAY_MERCHANT_ID!
-export const SEPAY_SECRET_KEY  = process.env.SEPAY_SECRET_KEY!
-export const SEPAY_SANDBOX     = process.env.SEPAY_SANDBOX === 'true'
+// .trim() removes stray newlines that bash heredoc (<<<) can inject into env vars
+export const SEPAY_MERCHANT_ID = (process.env.SEPAY_MERCHANT_ID ?? '').trim()
+export const SEPAY_SECRET_KEY  = (process.env.SEPAY_SECRET_KEY ?? '').trim()
+export const SEPAY_SANDBOX     = (process.env.SEPAY_SANDBOX ?? '').trim() === 'true'
 
 export const SEPAY_CHECKOUT_URL = SEPAY_SANDBOX
   ? 'https://pay-sandbox.sepay.vn/v1/checkout/init'
