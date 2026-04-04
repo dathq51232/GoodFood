@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/service'
 import { cancelSePayOrder } from '@/lib/sepay'
 
 export async function POST(
@@ -13,8 +14,10 @@ export async function POST(
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Chưa đăng nhập' }, { status: 401 })
 
+  const db = createServiceClient()
+
   // Verify order belongs to user and is cancellable
-  const { data: order, error: fetchErr } = await supabase
+  const { data: order, error: fetchErr } = await db
     .from('orders')
     .select('id, status, pay_method, customer_id')
     .eq('code', code)
@@ -31,7 +34,7 @@ export async function POST(
   }
 
   // Update order status in DB
-  const { error: updateErr } = await supabase
+  const { error: updateErr } = await db
     .from('orders')
     .update({ status: 'cancelled' })
     .eq('id', order.id)

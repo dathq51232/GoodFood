@@ -1,13 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/service'
 import { generateOrderCode } from '@/lib/utils'
 import { buildSePayForm, SEPAY_CHECKOUT_URL } from '@/lib/sepay'
 
 export async function POST(req: NextRequest) {
   try {
+    // Verify user session via anon client (reads cookies)
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Chưa đăng nhập' }, { status: 401 })
+
+    // Use service client for all DB writes (bypasses RLS)
+    const db = createServiceClient()
 
     const body = await req.json()
     const { restaurant_id, items, delivery_address, note, pay_method } = body
@@ -18,7 +23,7 @@ export async function POST(req: NextRequest) {
     // Validate menu items & compute subtotal
     type MenuItemRow = { id: string; price: number; name: string; is_available: boolean }
     const itemIds = items.map((i: { menu_item_id: string }) => i.menu_item_id)
-    const { data: rawMenuItems, error: menuErr } = await supabase
+    const { data: rawMenuItems, error: menuErr } = await db
       .from('menu_items')
       .select('id, price, name, is_available')
       .in('id', itemIds)
@@ -34,7 +39,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Validate restaurant
-    const { data: restaurant, error: rErr } = await supabase
+    const { data: restaurant, error: rErr } = await db
       .from('restaurants')
       .select('delivery_fee, min_order, is_open, name')
       .eq('id', restaurant_id)
@@ -51,7 +56,7 @@ export async function POST(req: NextRequest) {
     const code = generateOrderCode()
 
     // Create order
-    const { data: order, error: orderErr } = await supabase
+    const { data: order, error: orderErr } = await db
       .from('orders')
       .insert({
         code,
@@ -78,7 +83,7 @@ export async function POST(req: NextRequest) {
       return { order_id: order.id, menu_item_id: item.menu_item_id, name: m.name, price: m.price, quantity: item.quantity }
     })
 
-    const { error: itemsErr } = await supabase.from('order_items').insert(orderItems)
+    const { error: itemsErr } = await db.from('order_items').insert(orderItems)
     if (itemsErr) throw itemsErr
 
     // For transfer payments: build SePay checkout form
@@ -112,7 +117,8 @@ export async function GET() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Chưa đăng nhập' }, { status: 401 })
 
-  const { data, error } = await supabase
+  const db = createServiceClient()
+  const { data, error } = await db
     .from('orders')
     .select('*, restaurant:restaurants(name, image_url), order_items(*)')
     .eq('customer_id', user.id)
