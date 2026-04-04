@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { generateOrderCode } from '@/lib/utils'
+import { buildSePayForm, SEPAY_CHECKOUT_URL } from '@/lib/sepay'
 
 export async function POST(req: NextRequest) {
   try {
@@ -79,6 +80,25 @@ export async function POST(req: NextRequest) {
 
     const { error: itemsErr } = await supabase.from('order_items').insert(orderItems)
     if (itemsErr) throw itemsErr
+
+    // For transfer payments: build SePay checkout form
+    if (pay_method === 'transfer') {
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+      const sePayFields = buildSePayForm({
+        order_amount: String(total),
+        operation: 'PURCHASE',
+        order_description: `GoodFood - Đơn hàng ${order.code}`,
+        order_invoice_number: order.code,
+        customer_id: user.id,
+        success_url: `${appUrl}/payment/success`,
+        error_url: `${appUrl}/payment/error`,
+        cancel_url: `${appUrl}/payment/cancel`,
+      })
+      return NextResponse.json({
+        code: order.code,
+        sepay: { action: SEPAY_CHECKOUT_URL, fields: sePayFields },
+      }, { status: 201 })
+    }
 
     return NextResponse.json({ code: order.code }, { status: 201 })
   } catch (err) {

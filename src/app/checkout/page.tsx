@@ -87,6 +87,33 @@ export default function CheckoutPage() {
         return
       }
 
+      // Transfer payment → submit form to SePay checkout
+      if (data.sepay) {
+        const { action, fields } = data.sepay as { action: string; fields: Record<string, string> }
+        const form = document.createElement('form')
+        form.method = 'POST'
+        form.action = action
+        // Field order must match SePay requirements
+        const fieldOrder = [
+          'order_amount', 'merchant', 'currency', 'operation',
+          'order_description', 'order_invoice_number',
+          'customer_id', 'payment_method',
+          'success_url', 'error_url', 'cancel_url', 'signature',
+        ]
+        for (const key of fieldOrder) {
+          if (fields[key] !== undefined) {
+            const input = document.createElement('input')
+            input.type = 'hidden'
+            input.name = key
+            input.value = fields[key]
+            form.appendChild(input)
+          }
+        }
+        document.body.appendChild(form)
+        form.submit()
+        return
+      }
+
       clearCart()
       router.push(`/orders/${data.code}?new=1`)
     } catch {
@@ -190,17 +217,27 @@ export default function CheckoutPage() {
           <div className="bg-white rounded-2xl p-4 border border-gray-100">
             <p className="font-semibold text-sm mb-3">Phương thức thanh toán</p>
             <div className="grid grid-cols-2 gap-2">
-              {([
-                { key: 'cash', label: 'Tiền mặt', Icon: Banknote },
-                { key: 'transfer', label: 'Chuyển khoản', Icon: CreditCard },
-              ] as const).map(({ key, label, Icon }) => (
-                <button key={key} onClick={() => setPayMethod(key)}
-                  className={`flex items-center gap-2 p-3 rounded-xl border-2 transition-colors ${payMethod === key ? 'border-orange-500 bg-orange-50' : 'border-gray-200'}`}>
-                  <Icon size={18} className={payMethod === key ? 'text-orange-500' : 'text-gray-400'} />
-                  <span className="text-sm font-medium">{label}</span>
-                </button>
-              ))}
+              <button onClick={() => setPayMethod('cash')}
+                className={`flex items-center gap-2 p-3 rounded-xl border-2 transition-colors ${payMethod === 'cash' ? 'border-orange-500 bg-orange-50' : 'border-gray-200'}`}>
+                <Banknote size={18} className={payMethod === 'cash' ? 'text-orange-500' : 'text-gray-400'} />
+                <span className="text-sm font-medium">Tiền mặt</span>
+              </button>
+              <button onClick={() => setPayMethod('transfer')}
+                className={`flex flex-col items-start gap-1 p-3 rounded-xl border-2 transition-colors ${payMethod === 'transfer' ? 'border-orange-500 bg-orange-50' : 'border-gray-200'}`}>
+                <div className="flex items-center gap-2">
+                  <CreditCard size={18} className={payMethod === 'transfer' ? 'text-orange-500' : 'text-gray-400'} />
+                  <span className="text-sm font-medium">Chuyển khoản</span>
+                </div>
+                <span className="text-[10px] font-bold text-orange-500 bg-orange-100 px-1.5 py-0.5 rounded-full ml-6">
+                  QR · SePay
+                </span>
+              </button>
             </div>
+            {payMethod === 'transfer' && (
+              <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
+                <span>🔒</span> Thanh toán an toàn qua cổng SePay — hỗ trợ QR ngân hàng & thẻ quốc tế
+              </p>
+            )}
           </div>
 
           {/* Summary */}
