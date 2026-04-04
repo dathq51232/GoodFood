@@ -1,45 +1,33 @@
+/**
+ * /api/orders/[code]/cancel
+ *
+ * POST — Hủy đơn hàng theo mã code.
+ * Business logic nằm trong orderService.cancelOrder().
+ */
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { createServiceClient } from '@/lib/supabase/service'
-import { cancelSePayOrder } from '@/lib/sepay'
+import { handleError, unauthorized, badRequest } from '@/lib/errors'
+import { cancelOrder } from '@/services/orderService'
 
 export async function POST(
   _req: NextRequest,
   { params }: { params: Promise<{ code: string }> }
 ) {
-  const { code } = await params
-  if (!code) return NextResponse.json({ error: 'Thiếu mã đơn hàng' }, { status: 400 })
+  try {
+    // 1. Lấy mã đơn từ URL params
+    const { code } = await params
+    if (!code) throw badRequest('Thiếu mã đơn hàng')
 
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Chưa đăng nhập' }, { status: 401 })
+    // 2. Xác thực session
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw unauthorized()
 
-  const db = createServiceClient()
+    // 3. Gọi service
+    await cancelOrder(code, user.id)
 
-  // Verify order belongs to user and is cancellable
-  const { data: order, error: fetchErr } = await db
-    .from('orders')
-    .select('id, status, pay_method, customer_id')
-    .eq('code', code)
-    .single()
-
-  if (fetchErr || !order) return NextResponse.json({ error: 'Không tìm thấy đơn hàng' }, { status: 404 })
-  if (order.customer_id !== user.id) return NextResponse.json({ error: 'Không có quyền hủy đơn này' }, { status: 403 })
-  if (order.status === 'cancelled') return NextResponse.json({ message: 'Đơn đã được hủy trước đó' })
-  if (order.status === 'delivered') return NextResponse.json({ error: 'Không thể hủy đơn đã giao' }, { status: 400 })
-
-  // Cancel on SePay side if it was a transfer payment
-  if (order.pay_method === 'transfer') {
-    await cancelSePayOrder(code)
+    return NextResponse.json({ success: true, data: { message: 'Đã hủy đơn hàng thành công' } })
+  } catch (err) {
+    return handleError(err)
   }
-
-  // Update order status in DB
-  const { error: updateErr } = await db
-    .from('orders')
-    .update({ status: 'cancelled' })
-    .eq('id', order.id)
-
-  if (updateErr) return NextResponse.json({ error: 'Không thể hủy đơn hàng' }, { status: 500 })
-
-  return NextResponse.json({ message: 'Đã hủy đơn hàng thành công' })
 }
