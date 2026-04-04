@@ -57,9 +57,12 @@ export function createSePaySignature(
     }
   }
   const signingString = parts.join(',')
+  console.log('[SePay] signing_string:', signingString)
   const hmac = crypto.createHmac('sha256', secretKey)
   hmac.update(signingString)
-  return hmac.digest('base64')
+  const sig = hmac.digest('base64')
+  console.log('[SePay] signature:', sig)
+  return sig
 }
 
 // ─── Build full form fields (ready to POST) ─────────────────────────────────

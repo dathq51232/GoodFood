@@ -92,9 +92,9 @@ export async function POST(req: NextRequest) {
       const sePayFields = buildSePayForm({
         order_amount: String(total),
         operation: 'PURCHASE',
-        order_description: `GoodFood - Đơn hàng ${order.code}`,
+        order_description: `GoodFood order ${order.code}`,
         order_invoice_number: order.code,
-        customer_id: user.id,
+        // omit customer_id — keep form minimal to match SePay example exactly
         success_url: `${appUrl}/payment/success`,
         error_url: `${appUrl}/payment/error`,
         cancel_url: `${appUrl}/payment/cancel`,
