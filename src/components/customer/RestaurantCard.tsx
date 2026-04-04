@@ -1,14 +1,21 @@
 import Link from 'next/link'
-import Image from 'next/image'
 import { Star, Clock, Bike } from 'lucide-react'
 import { formatCurrency, formatTime } from '@/lib/utils'
 import type { Restaurant } from '@/types/database'
 
 export function RestaurantCard({ restaurant }: { restaurant: Restaurant }) {
   return (
-    <Link href={`/restaurant/${restaurant.id}`} className="block">
-      <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-        <div className="relative h-44 bg-gray-100">
+    <Link href={`/restaurant/${restaurant.id}`} className="block flex-shrink-0" style={{ width: '176px' }}>
+      <div
+        className="rounded-2xl overflow-hidden transition-all hover:scale-[1.02] active:scale-[0.98]"
+        style={{
+          background: 'var(--color-surface)',
+          border: '1px solid var(--color-border)',
+          boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
+        }}
+      >
+        {/* Image */}
+        <div className="relative h-28 overflow-hidden" style={{ background: 'var(--color-surface-2)' }}>
           {restaurant.image_url ? (
             <img
               src={restaurant.image_url}
@@ -16,34 +23,47 @@ export function RestaurantCard({ restaurant }: { restaurant: Restaurant }) {
               className="w-full h-full object-cover"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-orange-50">
-              <span className="text-5xl">🍽️</span>
-            </div>
+            <div className="w-full h-full flex items-center justify-center text-4xl">🍽️</div>
           )}
+
+          {/* Closed overlay */}
           {!restaurant.is_open && (
-            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-              <span className="text-white font-semibold text-sm bg-black/60 px-3 py-1 rounded-full">Đã đóng cửa</span>
+            <div className="absolute inset-0 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.6)' }}>
+              <span
+                className="text-xs font-semibold px-2 py-1 rounded-full"
+                style={{ background: 'rgba(0,0,0,0.7)', color: '#fff' }}
+              >
+                Đã đóng cửa
+              </span>
             </div>
           )}
-          <div className="absolute top-2 right-2 bg-white rounded-full px-2 py-0.5 flex items-center gap-1 shadow-sm">
-            <Star size={12} className="text-yellow-400 fill-yellow-400" />
-            <span className="text-xs font-semibold">{restaurant.rating}</span>
+
+          {/* Rating badge */}
+          <div
+            className="absolute top-2 right-2 flex items-center gap-1 px-1.5 py-0.5 rounded-full text-xs font-bold"
+            style={{ background: 'var(--color-gold)', color: '#0f0f13' }}
+          >
+            <Star size={10} fill="#0f0f13" strokeWidth={0} />
+            <span>{restaurant.rating}</span>
           </div>
         </div>
+
+        {/* Info */}
         <div className="p-3">
-          <h3 className="font-semibold text-gray-900 text-sm">{restaurant.name}</h3>
-          <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">{restaurant.category}</p>
-          <div className="flex items-center gap-3 mt-2">
-            <div className="flex items-center gap-1 text-xs text-gray-500">
-              <Clock size={12} />
+          <h3 className="font-bold text-sm truncate" style={{ color: 'var(--color-text)' }}>
+            {restaurant.name}
+          </h3>
+          <p className="text-xs truncate mt-0.5" style={{ color: 'var(--color-muted)' }}>
+            {restaurant.category}
+          </p>
+          <div className="flex items-center gap-2 mt-2">
+            <div className="flex items-center gap-1 text-xs" style={{ color: 'var(--color-subtle)' }}>
+              <Clock size={11} />
               <span>{formatTime(restaurant.delivery_time)}</span>
             </div>
-            <div className="flex items-center gap-1 text-xs text-gray-500">
-              <Bike size={12} />
+            <div className="flex items-center gap-1 text-xs" style={{ color: 'var(--color-subtle)' }}>
+              <Bike size={11} />
               <span>{formatCurrency(restaurant.delivery_fee)}</span>
-            </div>
-            <div className="text-xs text-gray-400">
-              Tối thiểu {formatCurrency(restaurant.min_order)}
             </div>
           </div>
         </div>

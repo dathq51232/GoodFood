@@ -66,8 +66,8 @@ export async function createOrder(
   for (const item of items) {
     const menuItem = menuItems.find((m) => m.id === item.menu_item_id)
     if (!menuItem) throw badRequest(`Món ăn không tồn tại`)
-    if (!menuItem.is_available) throw badRequest(`Món "${menuItem.name}" tạm thời không có`)
-    subtotal += menuItem.price * item.quantity
+    if (!menuItem.is_available) throw badRequest(`Món "${menuItem.name ?? ''}" tạm thời không có`)
+    subtotal += (menuItem.price ?? 0) * item.quantity
   }
 
   // ── 2. Validate nhà hàng ──────────────────────────────────────────────
@@ -78,13 +78,14 @@ export async function createOrder(
     .single()
 
   if (rErr || !restaurant) throw badRequest('Nhà hàng không tồn tại')
-  if (!restaurant.is_open) throw badRequest(`${restaurant.name} đang đóng cửa`)
-  if (subtotal < restaurant.min_order) {
-    throw badRequest(`Đơn tối thiểu ${restaurant.min_order.toLocaleString('vi')}đ`)
+  if (!restaurant.is_open) throw badRequest(`${restaurant.name ?? 'Nhà hàng'} đang đóng cửa`)
+  const minOrder = restaurant.min_order ?? 0
+  if (subtotal < minOrder) {
+    throw badRequest(`Đơn tối thiểu ${minOrder.toLocaleString('vi')}đ`)
   }
 
   // ── 3. Tính tổng ─────────────────────────────────────────────────────
-  const deliveryFee = restaurant.delivery_fee
+  const deliveryFee = restaurant.delivery_fee ?? 0
   const total = subtotal + deliveryFee
   const code = generateOrderCode()
 
@@ -122,8 +123,8 @@ export async function createOrder(
     return {
       order_id: order.id,
       menu_item_id: item.menu_item_id,
-      name: menuItem.name,
-      price: menuItem.price,
+      name: menuItem.name ?? '',
+      price: menuItem.price ?? 0,
       quantity: item.quantity,
     }
   })
@@ -135,19 +136,19 @@ export async function createOrder(
     const sePayFields = buildSePayForm({
       order_amount: String(total),
       operation: 'PURCHASE',
-      order_description: `GoodFood order ${order.code}`,
-      order_invoice_number: order.code,
+      order_description: `GoodFood order ${order.code ?? ''}`,
+      order_invoice_number: order.code ?? '',
       success_url: `${appUrl}/payment/success`,
       error_url: `${appUrl}/payment/error`,
       cancel_url: `${appUrl}/payment/cancel`,
     })
     return {
-      code: order.code,
-      sepay: { action: SEPAY_CHECKOUT_URL, fields: sePayFields as Record<string, string> },
+      code: order.code ?? '',
+      sepay: { action: SEPAY_CHECKOUT_URL, fields: sePayFields as unknown as Record<string, string> },
     }
   }
 
-  return { code: order.code }
+  return { code: order.code ?? '' }
 }
 
 /**

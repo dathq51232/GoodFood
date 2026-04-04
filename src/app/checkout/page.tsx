@@ -12,10 +12,9 @@ import { Input } from '@/components/ui/input'
 
 const MapPicker = dynamic(
   () => import('@/components/map/MapPicker').then((m) => m.MapPicker),
-  { ssr: false, loading: () => <div className="h-52 rounded-xl bg-gray-100 animate-pulse" /> }
+  { ssr: false, loading: () => <div className="h-52 rounded-xl animate-shimmer" /> }
 )
 
-// Leaflet CSS
 const LeafletCSS = () => {
   useEffect(() => {
     const link = document.createElement('link')
@@ -40,10 +39,19 @@ export default function CheckoutPage() {
 
   if (!restaurant || items.length === 0) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4">
+      <div
+        className="min-h-screen flex flex-col items-center justify-center gap-4"
+        style={{ background: 'var(--color-bg)' }}
+      >
         <p className="text-6xl">🛒</p>
-        <p className="text-gray-500">Giỏ hàng trống</p>
-        <Link href="/" className="text-orange-500 font-medium">Quay lại đặt đồ</Link>
+        <p style={{ color: 'var(--color-muted)' }}>Giỏ hàng trống</p>
+        <Link
+          href="/"
+          className="font-bold text-sm px-5 py-2 rounded-full"
+          style={{ background: 'var(--color-gold)', color: '#0f0f13' }}
+        >
+          Quay lại đặt đồ
+        </Link>
       </div>
     )
   }
@@ -53,14 +61,8 @@ export default function CheckoutPage() {
   const grandTotal = subtotal + deliveryFee
 
   const handleOrder = async () => {
-    if (!user) {
-      router.push('/auth/login?redirect=/checkout')
-      return
-    }
-    if (!address.trim()) {
-      setError('Vui lòng nhập địa chỉ giao hàng')
-      return
-    }
+    if (!user) { router.push('/auth/login?redirect=/checkout'); return }
+    if (!address.trim()) { setError('Vui lòng nhập địa chỉ giao hàng'); return }
     setError('')
     setLoading(true)
 
@@ -70,10 +72,7 @@ export default function CheckoutPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           restaurant_id: restaurant.id,
-          items: items.map(({ menu_item, quantity }) => ({
-            menu_item_id: menu_item.id,
-            quantity,
-          })),
+          items: items.map(({ menu_item, quantity }) => ({ menu_item_id: menu_item.id, quantity })),
           delivery_address: address,
           note,
           pay_method: payMethod,
@@ -81,19 +80,13 @@ export default function CheckoutPage() {
       })
 
       const data = await res.json()
-      if (!res.ok) {
-        setError(data.error || 'Đặt hàng thất bại, thử lại')
-        setLoading(false)
-        return
-      }
+      if (!res.ok) { setError(data.error || 'Đặt hàng thất bại, thử lại'); setLoading(false); return }
 
-      // Transfer payment → submit form to SePay checkout
       if (data.sepay) {
         const { action, fields } = data.sepay as { action: string; fields: Record<string, string> }
         const form = document.createElement('form')
         form.method = 'POST'
         form.action = action
-        // Field order must match SePay requirements
         const fieldOrder = [
           'order_amount', 'merchant', 'currency', 'operation',
           'order_description', 'order_invoice_number',
@@ -103,9 +96,7 @@ export default function CheckoutPage() {
         for (const key of fieldOrder) {
           if (fields[key] !== undefined) {
             const input = document.createElement('input')
-            input.type = 'hidden'
-            input.name = key
-            input.value = fields[key]
+            input.type = 'hidden'; input.name = key; input.value = fields[key]
             form.appendChild(input)
           }
         }
@@ -122,46 +113,73 @@ export default function CheckoutPage() {
     }
   }
 
+  // Shared card style
+  const cardStyle = {
+    background: 'var(--color-surface)',
+    border: '1px solid var(--color-border)',
+    borderRadius: '16px',
+    padding: '16px',
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50 pb-32">
+    <div className="min-h-screen pb-32" style={{ background: 'var(--color-bg)' }}>
       <div className="max-w-lg mx-auto">
-        <div className="sticky top-0 z-40 bg-white border-b border-gray-100 px-4 py-3 flex items-center gap-3">
-          <Link href={`/restaurant/${restaurant.id}`} className="p-1"><ArrowLeft size={20} /></Link>
-          <h1 className="font-bold text-lg">Xác nhận đơn hàng</h1>
+
+        {/* ── Top bar ──────────────────────────────────────────────────── */}
+        <div
+          className="sticky top-0 z-40 px-4 py-3 flex items-center gap-3"
+          style={{
+            background: 'var(--color-bg)',
+            borderBottom: '1px solid var(--color-border)',
+          }}
+        >
+          <Link
+            href={`/restaurant/${restaurant.id}`}
+            className="w-9 h-9 rounded-full flex items-center justify-center"
+            style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}
+          >
+            <ArrowLeft size={18} style={{ color: 'var(--color-text)' }} />
+          </Link>
+          <h1 className="font-black text-lg" style={{ color: 'var(--color-text)' }}>Xác nhận đơn hàng</h1>
         </div>
 
         <div className="px-4 pt-4 space-y-4">
+
           {/* Restaurant */}
-          <div className="bg-white rounded-2xl p-4 border border-gray-100">
-            <p className="text-xs text-gray-400 mb-1">Nhà hàng</p>
-            <p className="font-semibold text-gray-900">{restaurant.name}</p>
-            <p className="text-xs text-gray-500 mt-0.5">{restaurant.address}</p>
+          <div style={cardStyle}>
+            <p className="text-xs mb-1" style={{ color: 'var(--color-muted)' }}>Nhà hàng</p>
+            <p className="font-bold" style={{ color: 'var(--color-text)' }}>{restaurant.name}</p>
+            <p className="text-xs mt-0.5" style={{ color: 'var(--color-subtle)' }}>{restaurant.address}</p>
           </div>
 
           {/* Login prompt */}
           {!user && (
-            <div className="bg-orange-50 border border-orange-200 rounded-xl p-3 flex items-center gap-2">
-              <AlertCircle size={16} className="text-orange-500 flex-shrink-0" />
-              <p className="text-sm text-orange-700">
-                <Link href="/auth/login?redirect=/checkout" className="font-semibold underline">Đăng nhập</Link> để đặt hàng
+            <div
+              className="flex items-center gap-2 p-3 rounded-xl text-sm"
+              style={{ background: 'rgba(212,168,67,0.1)', border: '1px solid rgba(212,168,67,0.3)', color: 'var(--color-gold)' }}
+            >
+              <AlertCircle size={16} className="flex-shrink-0" />
+              <p>
+                <Link href="/auth/login?redirect=/checkout" className="font-bold underline">Đăng nhập</Link> để đặt hàng
               </p>
             </div>
           )}
 
           {/* Delivery address */}
-          <div className="bg-white rounded-2xl p-4 border border-gray-100">
+          <div style={cardStyle}>
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <MapPin size={16} className="text-orange-500" />
-                <p className="font-semibold text-sm">Địa chỉ giao hàng</p>
+                <MapPin size={16} style={{ color: 'var(--color-gold)' }} />
+                <p className="font-semibold text-sm" style={{ color: 'var(--color-text)' }}>Địa chỉ giao hàng</p>
               </div>
               <button
                 type="button"
                 onClick={() => setShowMap((v) => !v)}
-                className="flex items-center gap-1 text-xs text-orange-500 font-medium"
+                className="flex items-center gap-1 text-xs font-medium"
+                style={{ color: 'var(--color-gold)' }}
               >
                 <Map size={13} />
-                {showMap ? 'Ẩn bản đồ' : 'Chọn trên bản đồ'}
+                {showMap ? 'Ẩn bản đồ' : 'Chọn bản đồ'}
               </button>
             </div>
             <Input
@@ -172,98 +190,139 @@ export default function CheckoutPage() {
             {showMap && (
               <div className="mt-3">
                 <LeafletCSS />
-                <MapPicker
-                  initialAddress={address}
-                  onSelect={(addr) => setAddress(addr)}
-                />
+                <MapPicker initialAddress={address} onSelect={(addr) => setAddress(addr)} />
               </div>
             )}
           </div>
 
           {/* Items */}
-          <div className="bg-white rounded-2xl p-4 border border-gray-100">
-            <p className="font-semibold text-sm mb-3">Món đã chọn</p>
+          <div style={cardStyle}>
+            <p className="font-semibold text-sm mb-3" style={{ color: 'var(--color-text)' }}>Món đã chọn</p>
             <div className="space-y-3">
               {items.map(({ menu_item, quantity }) => (
                 <div key={menu_item.id} className="flex items-center gap-3">
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900">{menu_item.name}</p>
-                    <p className="text-sm text-orange-500">{formatCurrency(menu_item.price)}</p>
+                    <p className="text-sm font-medium" style={{ color: 'var(--color-text)' }}>{menu_item.name}</p>
+                    <p className="text-sm font-bold" style={{ color: 'var(--color-gold)' }}>{formatCurrency(menu_item.price)}</p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <button onClick={() => updateQuantity(menu_item.id, quantity - 1)}
-                      className="w-6 h-6 rounded-full border border-gray-300 flex items-center justify-center text-gray-600">
-                      {quantity === 1 ? <Trash2 size={12} className="text-red-500" /> : <Minus size={12} />}
+                    <button
+                      onClick={() => updateQuantity(menu_item.id, quantity - 1)}
+                      className="w-7 h-7 rounded-lg flex items-center justify-center"
+                      style={{ background: 'var(--color-surface-2)', border: '1px solid var(--color-border)', color: quantity === 1 ? '#f87171' : 'var(--color-muted)' }}
+                    >
+                      {quantity === 1 ? <Trash2 size={12} /> : <Minus size={12} />}
                     </button>
-                    <span className="w-5 text-center text-sm font-semibold">{quantity}</span>
-                    <button onClick={() => updateQuantity(menu_item.id, quantity + 1)}
-                      className="w-6 h-6 rounded-full bg-orange-500 flex items-center justify-center text-white">
+                    <span className="w-5 text-center text-sm font-bold" style={{ color: 'var(--color-text)' }}>{quantity}</span>
+                    <button
+                      onClick={() => updateQuantity(menu_item.id, quantity + 1)}
+                      className="w-7 h-7 rounded-lg flex items-center justify-center"
+                      style={{ background: 'var(--color-gold)', color: '#0f0f13' }}
+                    >
                       <Plus size={12} />
                     </button>
                   </div>
-                  <p className="text-sm font-semibold w-20 text-right">{formatCurrency(menu_item.price * quantity)}</p>
+                  <p className="text-sm font-bold w-20 text-right" style={{ color: 'var(--color-text)' }}>
+                    {formatCurrency(menu_item.price * quantity)}
+                  </p>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Note */}
-          <div className="bg-white rounded-2xl p-4 border border-gray-100">
-            <Input label="Ghi chú (tuỳ chọn)" placeholder="Ví dụ: ít đường, không hành..."
-              value={note} onChange={(e) => setNote(e.target.value)} />
+          <div style={cardStyle}>
+            <Input
+              label="Ghi chú (tuỳ chọn)"
+              placeholder="Ví dụ: ít đường, không hành..."
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+            />
           </div>
 
-          {/* Payment */}
-          <div className="bg-white rounded-2xl p-4 border border-gray-100">
-            <p className="font-semibold text-sm mb-3">Phương thức thanh toán</p>
+          {/* Payment method */}
+          <div style={cardStyle}>
+            <p className="font-semibold text-sm mb-3" style={{ color: 'var(--color-text)' }}>Phương thức thanh toán</p>
             <div className="grid grid-cols-2 gap-2">
-              <button onClick={() => setPayMethod('cash')}
-                className={`flex items-center gap-2 p-3 rounded-xl border-2 transition-colors ${payMethod === 'cash' ? 'border-orange-500 bg-orange-50' : 'border-gray-200'}`}>
-                <Banknote size={18} className={payMethod === 'cash' ? 'text-orange-500' : 'text-gray-400'} />
-                <span className="text-sm font-medium">Tiền mặt</span>
+              <button
+                onClick={() => setPayMethod('cash')}
+                className="flex items-center gap-2 p-3 rounded-xl transition-all"
+                style={{
+                  background: payMethod === 'cash' ? 'rgba(212,168,67,0.15)' : 'var(--color-surface-2)',
+                  border: `1px solid ${payMethod === 'cash' ? 'var(--color-gold)' : 'var(--color-border)'}`,
+                }}
+              >
+                <Banknote size={18} style={{ color: payMethod === 'cash' ? 'var(--color-gold)' : 'var(--color-muted)' }} />
+                <span className="text-sm font-medium" style={{ color: payMethod === 'cash' ? 'var(--color-gold)' : 'var(--color-text)' }}>
+                  Tiền mặt
+                </span>
               </button>
-              <button onClick={() => setPayMethod('transfer')}
-                className={`flex flex-col items-start gap-1 p-3 rounded-xl border-2 transition-colors ${payMethod === 'transfer' ? 'border-orange-500 bg-orange-50' : 'border-gray-200'}`}>
+              <button
+                onClick={() => setPayMethod('transfer')}
+                className="flex flex-col items-start gap-1 p-3 rounded-xl transition-all"
+                style={{
+                  background: payMethod === 'transfer' ? 'rgba(212,168,67,0.15)' : 'var(--color-surface-2)',
+                  border: `1px solid ${payMethod === 'transfer' ? 'var(--color-gold)' : 'var(--color-border)'}`,
+                }}
+              >
                 <div className="flex items-center gap-2">
-                  <CreditCard size={18} className={payMethod === 'transfer' ? 'text-orange-500' : 'text-gray-400'} />
-                  <span className="text-sm font-medium">Chuyển khoản</span>
+                  <CreditCard size={18} style={{ color: payMethod === 'transfer' ? 'var(--color-gold)' : 'var(--color-muted)' }} />
+                  <span className="text-sm font-medium" style={{ color: payMethod === 'transfer' ? 'var(--color-gold)' : 'var(--color-text)' }}>
+                    Chuyển khoản
+                  </span>
                 </div>
-                <span className="text-[10px] font-bold text-orange-500 bg-orange-100 px-1.5 py-0.5 rounded-full ml-6">
+                <span
+                  className="text-[9px] font-black px-1.5 py-0.5 rounded-full ml-6"
+                  style={{ background: 'rgba(212,168,67,0.2)', color: 'var(--color-gold)' }}
+                >
                   QR · SePay
                 </span>
               </button>
             </div>
             {payMethod === 'transfer' && (
-              <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
-                <span>🔒</span> Thanh toán an toàn qua cổng SePay — hỗ trợ QR ngân hàng & thẻ quốc tế
+              <p className="text-xs mt-2 flex items-center gap-1" style={{ color: 'var(--color-muted)' }}>
+                🔒 Thanh toán an toàn qua cổng SePay — hỗ trợ QR ngân hàng & thẻ quốc tế
               </p>
             )}
           </div>
 
-          {/* Summary */}
-          <div className="bg-white rounded-2xl p-4 border border-gray-100 space-y-2">
-            <div className="flex justify-between text-sm text-gray-600">
-              <span>Tiền đồ ăn</span><span>{formatCurrency(subtotal)}</span>
-            </div>
-            <div className="flex justify-between text-sm text-gray-600">
-              <span>Phí giao hàng</span><span>{formatCurrency(deliveryFee)}</span>
-            </div>
-            <div className="border-t border-gray-100 pt-2 flex justify-between font-bold text-gray-900">
-              <span>Tổng cộng</span>
-              <span className="text-orange-500">{formatCurrency(grandTotal)}</span>
+          {/* Price summary */}
+          <div style={cardStyle}>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm" style={{ color: 'var(--color-muted)' }}>
+                <span>Tiền đồ ăn</span><span>{formatCurrency(subtotal)}</span>
+              </div>
+              <div className="flex justify-between text-sm" style={{ color: 'var(--color-muted)' }}>
+                <span>Phí giao hàng</span><span>{formatCurrency(deliveryFee)}</span>
+              </div>
+              <div
+                className="flex justify-between font-black text-base pt-2"
+                style={{ borderTop: '1px solid var(--color-border)', color: 'var(--color-text)' }}
+              >
+                <span>Tổng cộng</span>
+                <span style={{ color: 'var(--color-gold)' }}>{formatCurrency(grandTotal)}</span>
+              </div>
             </div>
           </div>
 
+          {/* Error */}
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-xl p-3 flex items-center gap-2">
-              <AlertCircle size={16} className="text-red-500" />
-              <p className="text-sm text-red-700">{error}</p>
+            <div
+              className="flex items-center gap-2 p-3 rounded-xl text-sm"
+              style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', color: '#f87171' }}
+            >
+              <AlertCircle size={16} className="flex-shrink-0" />
+              <p>{error}</p>
             </div>
           )}
         </div>
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-4">
+      {/* ── Sticky order button ─────────────────────────────────────────── */}
+      <div
+        className="fixed bottom-0 left-0 right-0 p-4"
+        style={{ background: 'var(--color-bg)', borderTop: '1px solid var(--color-border)' }}
+      >
         <div className="max-w-lg mx-auto">
           <Button size="lg" className="w-full" loading={loading} onClick={handleOrder}>
             {user ? `Đặt hàng · ${formatCurrency(grandTotal)}` : 'Đăng nhập để đặt hàng'}

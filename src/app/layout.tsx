@@ -10,13 +10,13 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: '#f97316',
+  themeColor: '#0f0f13',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="vi">
-      <body className="min-h-screen bg-gray-50 antialiased">
+      <body className="min-h-screen antialiased" style={{ background: 'var(--color-bg)', color: 'var(--color-text)' }}>
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>

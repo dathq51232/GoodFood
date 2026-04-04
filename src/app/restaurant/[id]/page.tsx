@@ -25,11 +25,12 @@ export default function RestaurantPage({ params }: { params: Promise<{ id: strin
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="h-56 bg-gray-200 animate-pulse" />
+      <div className="min-h-screen" style={{ background: 'var(--color-bg)' }}>
+        <div className="h-52 animate-shimmer" />
         <div className="px-4 pt-4 space-y-3">
-          <div className="bg-white rounded-2xl h-28 animate-pulse" />
-          <div className="bg-white rounded-2xl h-16 animate-pulse" />
+          <div className="h-28 rounded-2xl animate-shimmer" />
+          <div className="h-16 rounded-2xl animate-shimmer" />
+          <div className="h-16 rounded-2xl animate-shimmer" />
         </div>
       </div>
     )
@@ -37,8 +38,8 @@ export default function RestaurantPage({ params }: { params: Promise<{ id: strin
 
   if (!restaurant) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500">Không tìm thấy quán ăn</p>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--color-bg)' }}>
+        <p style={{ color: 'var(--color-muted)' }}>Không tìm thấy quán ăn</p>
       </div>
     )
   }
@@ -51,74 +52,127 @@ export default function RestaurantPage({ params }: { params: Promise<{ id: strin
   const cartCount = _hasHydrated ? itemCount() : 0
   const isDifferentRestaurant = _hasHydrated && cartRestaurant && cartRestaurant.id !== restaurant.id && cartCount > 0
 
+  // Món đầu tiên (bán chạy / featured)
+  const featuredItem = filtered[0]
+  const restItems = filtered.slice(1)
+
   return (
-    <div className="min-h-screen bg-gray-50 pb-32">
-      {/* Hero */}
-      <div className="relative h-56 bg-gray-200">
+    <div className="min-h-screen pb-36" style={{ background: 'var(--color-bg)' }}>
+
+      {/* ── Hero image ──────────────────────────────────────────────────── */}
+      <div className="relative h-52 overflow-hidden" style={{ background: 'var(--color-surface-2)' }}>
         {restaurant.image_url && (
           <img src={restaurant.image_url} alt={restaurant.name} className="w-full h-full object-cover" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-        <Link href="/" className="absolute top-4 left-4 w-9 h-9 bg-white/90 rounded-full flex items-center justify-center shadow">
-          <ArrowLeft size={18} />
+        {/* Gradient fade bottom */}
+        <div
+          className="absolute inset-0"
+          style={{ background: 'linear-gradient(to bottom, rgba(15,15,19,0.3) 0%, rgba(15,15,19,0.85) 100%)' }}
+        />
+
+        {/* Back button */}
+        <Link
+          href="/"
+          className="absolute top-4 left-4 w-9 h-9 rounded-full flex items-center justify-center"
+          style={{ background: 'rgba(15,15,19,0.7)', border: '1px solid var(--color-border)' }}
+        >
+          <ArrowLeft size={18} color="white" />
         </Link>
+
+        {/* Restaurant name overlay */}
+        <div className="absolute bottom-4 left-4 right-4">
+          <div className="flex items-center gap-2 mb-1">
+            <span
+              className="text-xs font-bold px-2 py-0.5 rounded-full"
+              style={{
+                background: restaurant.is_open ? 'rgba(212,168,67,0.2)' : 'rgba(255,255,255,0.1)',
+                color: restaurant.is_open ? 'var(--color-gold)' : 'var(--color-muted)',
+                border: `1px solid ${restaurant.is_open ? 'rgba(212,168,67,0.4)' : 'var(--color-border)'}`,
+              }}
+            >
+              {restaurant.is_open ? `● Đang mở · ${restaurant.open_time}–${restaurant.close_time}` : '● Đã đóng cửa'}
+            </span>
+          </div>
+          <h1 className="text-xl font-black text-white">{restaurant.name}</h1>
+        </div>
       </div>
 
       <div className="max-w-lg mx-auto px-4">
-        {/* Info card */}
-        <div className="bg-white rounded-2xl -mt-6 relative z-10 p-4 shadow-sm border border-gray-100 mb-4">
-          <h1 className="font-bold text-xl text-gray-900">{restaurant.name}</h1>
-          {restaurant.description && <p className="text-sm text-gray-500 mt-1">{restaurant.description}</p>}
-          <div className="flex flex-wrap items-center gap-3 mt-3">
-            <div className="flex items-center gap-1">
-              <Star size={14} className="text-yellow-400 fill-yellow-400" />
-              <span className="text-sm font-semibold">{restaurant.rating}</span>
-              <span className="text-xs text-gray-400">({restaurant.total_reviews})</span>
-            </div>
-            <div className="flex items-center gap-1 text-sm text-gray-600">
-              <Clock size={14} />
-              <span>{formatTime(restaurant.delivery_time)}</span>
-            </div>
-            <div className="flex items-center gap-1 text-sm text-gray-600">
-              <Bike size={14} />
-              <span>{formatCurrency(restaurant.delivery_fee)}</span>
-            </div>
+
+        {/* ── Info strip ────────────────────────────────────────────────── */}
+        <div
+          className="flex items-center gap-4 p-3 rounded-2xl mt-3 mb-3"
+          style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}
+        >
+          <div className="flex items-center gap-1.5">
+            <Star size={14} style={{ color: 'var(--color-gold)' }} fill="var(--color-gold)" />
+            <span className="text-sm font-bold" style={{ color: 'var(--color-text)' }}>{restaurant.rating}</span>
+            <span className="text-xs" style={{ color: 'var(--color-muted)' }}>({restaurant.total_reviews})</span>
           </div>
-          <p className="text-xs text-gray-400 mt-2">
-            📍 {restaurant.address} · {restaurant.is_open ? `${restaurant.open_time} – ${restaurant.close_time}` : 'Đã đóng cửa'}
-          </p>
+          <div className="flex items-center gap-1 text-xs" style={{ color: 'var(--color-muted)' }}>
+            <Clock size={13} />
+            <span>{formatTime(restaurant.delivery_time)}</span>
+          </div>
+          <div className="flex items-center gap-1 text-xs" style={{ color: 'var(--color-muted)' }}>
+            <Bike size={13} />
+            <span>{formatCurrency(restaurant.delivery_fee)}</span>
+          </div>
+          <div className="ml-auto text-xs" style={{ color: 'var(--color-subtle)' }}>
+            Tối thiểu {formatCurrency(restaurant.min_order)}
+          </div>
         </div>
 
+        {/* ── Different restaurant warning ───────────────────────────────── */}
         {isDifferentRestaurant && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-3 mb-4 flex items-start gap-2">
-            <Info size={16} className="text-yellow-600 flex-shrink-0 mt-0.5" />
-            <p className="text-xs text-yellow-700">Giỏ hàng đang có món từ <b>{cartRestaurant.name}</b>. Thêm món sẽ xoá giỏ hàng cũ.</p>
+          <div
+            className="flex items-start gap-2 p-3 rounded-xl mb-3 text-xs"
+            style={{ background: 'rgba(212,168,67,0.1)', border: '1px solid rgba(212,168,67,0.3)', color: 'var(--color-gold)' }}
+          >
+            <Info size={14} className="flex-shrink-0 mt-0.5" />
+            <p>Giỏ hàng đang có món từ <b>{cartRestaurant.name}</b>. Thêm món sẽ xoá giỏ hàng cũ.</p>
           </div>
         )}
 
-        {/* Category tabs */}
+        {/* ── Category pills ─────────────────────────────────────────────── */}
         {categories.length > 1 && (
           <div className="flex gap-2 overflow-x-auto scrollbar-hide mb-4">
             {categories.map((cat) => (
-              <button key={cat} onClick={() => setActiveCategory(cat)}
-                className={`flex-shrink-0 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                  activeCategory === cat ? 'bg-orange-500 text-white' : 'bg-white text-gray-600 border border-gray-200'
-                }`}>
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className="flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition-all"
+                style={{
+                  background: activeCategory === cat ? 'var(--color-gold)' : 'var(--color-surface)',
+                  color: activeCategory === cat ? '#0f0f13' : 'var(--color-muted)',
+                  border: `1px solid ${activeCategory === cat ? 'var(--color-gold)' : 'var(--color-border)'}`,
+                }}
+              >
                 {cat === 'all' ? 'Tất cả' : cat}
               </button>
             ))}
           </div>
         )}
 
-        {/* Menu */}
+        {/* ── Menu items ─────────────────────────────────────────────────── */}
         {filtered.length === 0 ? (
-          <div className="text-center py-12 text-gray-400">
+          <div className="text-center py-12" style={{ color: 'var(--color-muted)' }}>
             <p className="text-4xl mb-2">🍽️</p>
-            <p>Chưa có món ăn nào</p>
+            <p className="text-sm">Chưa có món ăn nào</p>
           </div>
         ) : (
           <div className="space-y-3">
-            {filtered.map((item) => (
+            {/* Featured card — món đầu tiên / bán chạy */}
+            {featuredItem && (
+              <FeaturedMenuItemCard
+                item={featuredItem}
+                quantity={getItemQty(featuredItem.id)}
+                onAdd={() => addItem(featuredItem, restaurant)}
+                onDecrease={() => updateQuantity(featuredItem.id, getItemQty(featuredItem.id) - 1)}
+              />
+            )}
+
+            {/* Remaining items — compact list */}
+            {restItems.map((item) => (
               <MenuItemCard
                 key={item.id}
                 item={item}
@@ -131,16 +185,29 @@ export default function RestaurantPage({ params }: { params: Promise<{ id: strin
         )}
       </div>
 
-      {/* Floating cart */}
+      {/* ── Sticky cart bar ────────────────────────────────────────────── */}
       {_hasHydrated && cartCount > 0 && cartRestaurant?.id === restaurant.id && (
         <div className="fixed bottom-6 left-4 right-4 max-w-lg mx-auto z-50 animate-slide-up">
-          <Link href="/checkout"
-            className="bg-orange-500 text-white rounded-2xl p-4 flex items-center justify-between shadow-lg hover:bg-orange-600 transition-colors">
+          <Link
+            href="/checkout"
+            className="flex items-center justify-between p-4 rounded-2xl transition-opacity hover:opacity-90"
+            style={{
+              background: 'linear-gradient(135deg, var(--color-gold-dark), var(--color-gold))',
+              boxShadow: '0 8px 24px rgba(212,168,67,0.4)',
+            }}
+          >
             <div className="flex items-center gap-3">
-              <div className="bg-orange-400 rounded-xl w-8 h-8 flex items-center justify-center text-sm font-bold">{cartCount}</div>
-              <span className="font-semibold">Xem giỏ hàng</span>
+              <div
+                className="w-8 h-8 rounded-xl flex items-center justify-center text-sm font-black"
+                style={{ background: 'rgba(0,0,0,0.2)', color: '#fff' }}
+              >
+                {cartCount}
+              </div>
+              <span className="font-bold text-sm" style={{ color: '#0f0f13' }}>Xem giỏ hàng</span>
             </div>
-            <span className="font-bold">{formatCurrency(cartTotal)}</span>
+            <span className="font-black text-sm" style={{ color: '#0f0f13' }}>
+              {formatCurrency(cartTotal)} →
+            </span>
           </Link>
         </div>
       )}
@@ -148,34 +215,132 @@ export default function RestaurantPage({ params }: { params: Promise<{ id: strin
   )
 }
 
+// ─── Featured (large) menu item card ────────────────────────────────────────
+function FeaturedMenuItemCard({ item, quantity, onAdd, onDecrease }: {
+  item: MenuItem; quantity: number; onAdd: () => void; onDecrease: () => void
+}) {
+  return (
+    <div
+      className="rounded-2xl p-4 flex gap-3 items-center"
+      style={{
+        background: 'linear-gradient(135deg, var(--color-surface) 0%, var(--color-surface-2) 100%)',
+        border: '1px solid rgba(212,168,67,0.25)',
+      }}
+    >
+      {/* Image */}
+      {item.image_url ? (
+        <img src={item.image_url} alt={item.name} className="w-20 h-20 rounded-xl object-cover flex-shrink-0" />
+      ) : (
+        <div
+          className="w-20 h-20 rounded-xl flex items-center justify-center flex-shrink-0 text-4xl"
+          style={{ background: 'var(--color-surface-2)' }}
+        >
+          🍽️
+        </div>
+      )}
+
+      <div className="flex-1 min-w-0">
+        {/* Badge */}
+        <span
+          className="inline-block text-[9px] font-black px-2 py-0.5 rounded-full mb-2"
+          style={{ background: 'var(--color-gold)', color: '#0f0f13', letterSpacing: '0.05em' }}
+        >
+          BÁN CHẠY
+        </span>
+        <p className="font-bold text-sm" style={{ color: 'var(--color-text)' }}>{item.name}</p>
+        {item.description && (
+          <p className="text-xs mt-0.5 line-clamp-2" style={{ color: 'var(--color-muted)' }}>
+            {item.description}
+          </p>
+        )}
+        <p className="font-black text-base mt-2" style={{ color: 'var(--color-gold)' }}>
+          {formatCurrency(item.price)}
+        </p>
+      </div>
+
+      {/* Qty controls */}
+      <div className="flex items-center gap-2 flex-shrink-0">
+        {quantity > 0 && (
+          <>
+            <button
+              onClick={onDecrease}
+              className="w-8 h-8 rounded-lg flex items-center justify-center transition-opacity hover:opacity-80"
+              style={{ background: 'var(--color-surface-2)', border: '1px solid var(--color-border)', color: 'var(--color-muted)' }}
+            >
+              <Minus size={14} />
+            </button>
+            <span className="w-5 text-center text-sm font-bold" style={{ color: 'var(--color-text)' }}>
+              {quantity}
+            </span>
+          </>
+        )}
+        <button
+          onClick={onAdd}
+          className="w-8 h-8 rounded-lg flex items-center justify-center transition-opacity hover:opacity-80"
+          style={{ background: 'var(--color-gold)', color: '#0f0f13' }}
+        >
+          <Plus size={15} />
+        </button>
+      </div>
+    </div>
+  )
+}
+
+// ─── Regular (compact) menu item card ───────────────────────────────────────
 function MenuItemCard({ item, quantity, onAdd, onDecrease }: {
   item: MenuItem; quantity: number; onAdd: () => void; onDecrease: () => void
 }) {
   return (
-    <div className="bg-white rounded-2xl p-3 flex gap-3 items-center border border-gray-100 shadow-sm">
+    <div
+      className="rounded-xl p-3 flex gap-3 items-center"
+      style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}
+    >
+      {/* Small image */}
       {item.image_url ? (
-        <img src={item.image_url} alt={item.name} className="w-20 h-20 rounded-xl object-cover flex-shrink-0" />
+        <img src={item.image_url} alt={item.name} className="w-14 h-14 rounded-lg object-cover flex-shrink-0" />
       ) : (
-        <div className="w-20 h-20 rounded-xl bg-orange-50 flex items-center justify-center flex-shrink-0 text-3xl">🍽️</div>
+        <div
+          className="w-14 h-14 rounded-lg flex items-center justify-center flex-shrink-0 text-2xl"
+          style={{ background: 'var(--color-surface-2)' }}
+        >
+          🍽️
+        </div>
       )}
+
       <div className="flex-1 min-w-0">
-        <p className="font-semibold text-sm text-gray-900">{item.name}</p>
-        {item.description && <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{item.description}</p>}
-        <p className="text-orange-500 font-bold text-sm mt-1">{formatCurrency(item.price)}</p>
+        <p className="font-semibold text-sm" style={{ color: 'var(--color-text)' }}>{item.name}</p>
+        {item.description && (
+          <p className="text-xs mt-0.5 line-clamp-1" style={{ color: 'var(--color-muted)' }}>
+            {item.description}
+          </p>
+        )}
+        <p className="font-bold text-sm mt-1" style={{ color: 'var(--color-gold)' }}>
+          {formatCurrency(item.price)}
+        </p>
       </div>
+
+      {/* Qty controls */}
       <div className="flex items-center gap-2 flex-shrink-0">
         {quantity > 0 && (
           <>
-            <button onClick={onDecrease}
-              className="w-7 h-7 rounded-full border border-orange-500 flex items-center justify-center text-orange-500 hover:bg-orange-50">
-              <Minus size={14} />
+            <button
+              onClick={onDecrease}
+              className="w-7 h-7 rounded-lg flex items-center justify-center transition-opacity hover:opacity-80"
+              style={{ background: 'var(--color-surface-2)', border: '1px solid var(--color-border)', color: 'var(--color-muted)' }}
+            >
+              <Minus size={12} />
             </button>
-            <span className="w-5 text-center text-sm font-bold">{quantity}</span>
+            <span className="w-4 text-center text-xs font-bold" style={{ color: 'var(--color-text)' }}>
+              {quantity}
+            </span>
           </>
         )}
-        <button onClick={onAdd}
-          className="w-7 h-7 rounded-full bg-orange-500 flex items-center justify-center text-white hover:bg-orange-600">
-          <Plus size={14} />
+        <button
+          onClick={onAdd}
+          className="w-7 h-7 rounded-lg flex items-center justify-center transition-opacity hover:opacity-80"
+          style={{ background: 'var(--color-gold)', color: '#0f0f13' }}
+        >
+          <Plus size={13} />
         </button>
       </div>
     </div>

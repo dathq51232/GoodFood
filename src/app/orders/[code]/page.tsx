@@ -44,8 +44,8 @@ export default function OrderDetailPage({
       .single()
       .then(({ data }) => {
         if (data) {
-          setOrder(data as Order)
-          setStatus(data.status)
+          setOrder(data as unknown as Order)
+          setStatus(data.status ?? '')
         }
         setLoading(false)
       })

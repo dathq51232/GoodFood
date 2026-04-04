@@ -13,7 +13,7 @@ export function Header() {
               <span>Giao đến</span>
             </div>
             <button className="font-semibold text-sm text-gray-900 flex items-center gap-1">
-              Hoài Đức, Hà Nội
+              Hoài Đức, Lâm Đồng
               <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>

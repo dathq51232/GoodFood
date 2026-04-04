@@ -81,7 +81,7 @@ function RestaurantRegisterForm({
       .single()
     setSaving(false)
     if (err) { setError('Lỗi tạo nhà hàng: ' + err.message); return }
-    if (data) onDone(data)
+    if (data) onDone(data as unknown as { id: string; name: string; is_open: boolean; rating: number })
   }
 
   return (
@@ -197,7 +197,7 @@ export default function RestaurantAdminPage() {
         return
       }
 
-      setRestaurant(rest)
+      setRestaurant(rest as unknown as Restaurant)
 
       // Load today's orders
       const today = new Date()
@@ -209,7 +209,7 @@ export default function RestaurantAdminPage() {
         .gte('created_at', today.toISOString())
         .order('created_at', { ascending: false })
 
-      setOrders((ordersData as Order[]) || [])
+      setOrders((ordersData as unknown as Order[]) || [])
       setLoading(false)
 
       // Realtime
@@ -228,7 +228,7 @@ export default function RestaurantAdminPage() {
               .select('id, code, status, total, note, delivery_address, pay_method, created_at, customer:users!orders_customer_id_fkey(name, phone), order_items(name, price, quantity)')
               .eq('id', payload.new.id)
               .single()
-            if (newOrder) setOrders((prev) => [newOrder as Order, ...prev])
+            if (newOrder) setOrders((prev) => [newOrder as unknown as Order, ...prev])
           } else if (payload.eventType === 'UPDATE') {
             setOrders((prev) => prev.map((o) =>
               o.id === payload.new.id ? { ...o, status: payload.new.status } : o

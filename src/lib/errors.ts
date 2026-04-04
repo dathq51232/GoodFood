@@ -65,7 +65,7 @@ export function handleError(err: unknown): NextResponse {
       {
         success: false,
         error: 'Dữ liệu không hợp lệ',
-        details: err.errors.map((e) => ({
+        details: err.issues.map((e) => ({
           field: e.path.join('.'),
           message: e.message,
         })),

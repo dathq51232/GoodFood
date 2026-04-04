@@ -25,9 +25,10 @@ export function ServiceAreaMap() {
         shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
       })
 
+      // Đức Linh, Bình Thuận (nay là Lâm Đồng) — 11.28°N, 107.70°E
       const map = L.map(mapRef.current!, {
-        center: [20.972, 105.714],
-        zoom: 13,
+        center: [11.275, 107.700],
+        zoom: 12,
         zoomControl: false,
         scrollWheelZoom: false,
         dragging: false,
@@ -38,28 +39,28 @@ export function ServiceAreaMap() {
         maxZoom: 19,
       }).addTo(map)
 
-      // Service area polygon covering all villages
+      // Service area polygon — Đức Tài · Trà Tân · Xuân Lộc · Ông Đồn
       L.polygon(
         [
-          [20.985, 105.695],
-          [20.985, 105.735],
-          [20.960, 105.735],
-          [20.960, 105.695],
+          [11.310, 107.660],
+          [11.310, 107.745],
+          [11.240, 107.745],
+          [11.240, 107.660],
         ],
-        { color: '#f97316', fillColor: '#f97316', fillOpacity: 0.10, weight: 2.5 }
+        { color: '#d4a843', fillColor: '#d4a843', fillOpacity: 0.12, weight: 2.5 }
       ).addTo(map)
 
-      // Village markers
+      // Village markers — tọa độ thực tế Đức Linh, Bình Thuận
       const villages: [number, number, string, string][] = [
-        [20.980, 105.700, 'Đức Tài', '🏠'],
-        [20.975, 105.710, 'Trà Tân', '🌿'],
-        [20.968, 105.720, 'Xuân Lộc · Ông Đồn', '⛺'],
-        [20.963, 105.728, 'Lâm Đồng (Bình Thuận cũ)', '📍'],
+        [11.295, 107.672, 'Đức Tài',   '🏠'],
+        [11.278, 107.695, 'Trà Tân',   '🌿'],
+        [11.258, 107.715, 'Xuân Lộc',  '⛺'],
+        [11.244, 107.730, 'Ông Đồn',   '📍'],
       ]
 
       villages.forEach(([lat, lng, name, icon]) => {
         const divIcon = L.divIcon({
-          html: `<div style="background:white;border:2px solid #f97316;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:0 2px 6px rgba(0,0,0,0.2)">${icon}</div>`,
+          html: `<div style="background:#1a1a24;border:2px solid #d4a843;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:0 2px 8px rgba(0,0,0,0.5)">${icon}</div>`,
           iconSize: [28, 28],
           iconAnchor: [14, 14],
           className: '',
@@ -81,10 +82,16 @@ export function ServiceAreaMap() {
   }, [])
 
   return (
-    <div className="rounded-2xl overflow-hidden border border-gray-100 relative" style={{ height: 180 }}>
+    <div
+      className="rounded-2xl overflow-hidden relative"
+      style={{ height: 180, border: '1px solid var(--color-border)' }}
+    >
       <div ref={mapRef} style={{ height: '100%', width: '100%' }} />
-      <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm text-xs font-semibold text-gray-700 px-2.5 py-1 rounded-full shadow">
-        📍 Khu vực phục vụ
+      <div
+        className="absolute top-2 left-2 text-xs font-semibold px-2.5 py-1 rounded-full"
+        style={{ background: 'rgba(15,15,19,0.85)', color: 'var(--color-gold)', border: '1px solid var(--color-border)' }}
+      >
+        📍 Đức Linh · Lâm Đồng
       </div>
     </div>
   )

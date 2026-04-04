@@ -9,11 +9,11 @@ import { useAuthStore } from '@/store/auth'
 import { createClient } from '@/lib/supabase/client'
 
 const MENU_ITEMS = [
-  { icon: MapPin, label: 'Địa chỉ của tôi', href: '/profile/addresses', color: 'text-red-500 bg-red-50' },
-  { icon: Phone, label: 'Thay đổi số điện thoại', href: '/auth/login', color: 'text-blue-500 bg-blue-50' },
-  { icon: Store, label: 'Đăng ký nhà hàng/cửa hàng', href: '/restaurant-admin', color: 'text-orange-500 bg-orange-50' },
-  { icon: Bike, label: 'Đăng ký làm shipper', href: '/shipper', color: 'text-green-500 bg-green-50' },
-  { icon: Settings, label: 'Cài đặt', href: '/settings', color: 'text-gray-500 bg-gray-100' },
+  { icon: MapPin,     label: 'Địa chỉ của tôi',             href: '/profile/addresses', accent: '#f87171' },
+  { icon: Phone,      label: 'Thay đổi số điện thoại',       href: '/auth/login',        accent: '#60a5fa' },
+  { icon: Store,      label: 'Đăng ký nhà hàng / cửa hàng', href: '/restaurant-admin',  accent: '#d4a843' },
+  { icon: Bike,       label: 'Đăng ký làm shipper',          href: '/shipper',           accent: '#34d399' },
+  { icon: Settings,   label: 'Cài đặt',                      href: '/settings',          accent: '#888888' },
 ]
 
 export default function ProfilePage() {
@@ -25,7 +25,7 @@ export default function ProfilePage() {
     if (!user) { router.push('/auth/login?redirect=/profile'); return }
     const supabase = createClient()
     supabase.from('users').select('name, phone').eq('id', user.id).single()
-      .then(({ data }) => { if (data) setProfile(data) })
+      .then(({ data }) => { if (data) setProfile({ name: data.name ?? '', phone: data.phone ?? '' }) })
   }, [user, router])
 
   const handleSignOut = async () => {
@@ -36,48 +36,87 @@ export default function ProfilePage() {
   if (!user) return null
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen pb-28" style={{ background: 'var(--color-bg)' }}>
       <DesktopNav />
       <div className="md:pl-56">
-      <div className="max-w-2xl mx-auto px-4 pt-12 space-y-4">
-        {/* User card */}
-        <div className="bg-gradient-to-br from-orange-500 to-red-400 rounded-2xl p-6 text-white">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center text-3xl">
+        <div className="max-w-lg mx-auto px-4 pt-10 space-y-4">
+
+          {/* ── User card ───────────────────────────────────────────────── */}
+          <div
+            className="rounded-2xl p-6 flex items-center gap-4 relative overflow-hidden"
+            style={{
+              background: 'linear-gradient(135deg, #1a1408 0%, #2d2408 50%, #1a1a24 100%)',
+              border: '1px solid rgba(212,168,67,0.3)',
+            }}
+          >
+            {/* Background decoration */}
+            <div
+              className="absolute right-4 top-2 text-5xl select-none pointer-events-none"
+              style={{ opacity: 0.15 }}
+            >
+              👤
+            </div>
+
+            <div
+              className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0"
+              style={{ background: 'rgba(212,168,67,0.15)', border: '1px solid rgba(212,168,67,0.3)' }}
+            >
               👤
             </div>
             <div>
-              <h2 className="font-bold text-xl">{profile?.name || 'Đang tải...'}</h2>
-              <p className="text-sm opacity-80">{profile?.phone || user.phone || ''}</p>
+              <h2 className="font-black text-xl" style={{ color: 'var(--color-text)' }}>
+                {profile?.name || user.email?.split('@')[0] || 'Người dùng'}
+              </h2>
+              <p className="text-sm mt-0.5" style={{ color: 'var(--color-gold)' }}>
+                {profile?.phone || user.phone || user.email || ''}
+              </p>
             </div>
           </div>
+
+          {/* ── Menu ──────────────────────────────────────────────────── */}
+          <div
+            className="rounded-2xl overflow-hidden"
+            style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}
+          >
+            {MENU_ITEMS.map(({ icon: Icon, label, href, accent }, i) => (
+              <Link
+                key={href}
+                href={href}
+                className="flex items-center gap-3 px-4 py-3.5 transition-all hover:brightness-110"
+                style={i < MENU_ITEMS.length - 1 ? { borderBottom: '1px solid var(--color-border)' } : {}}
+              >
+                <div
+                  className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
+                  style={{ background: `${accent}20` }}
+                >
+                  <Icon size={18} style={{ color: accent }} />
+                </div>
+                <span className="flex-1 text-sm font-medium" style={{ color: 'var(--color-text)' }}>
+                  {label}
+                </span>
+                <ChevronRight size={16} style={{ color: 'var(--color-subtle)' }} />
+              </Link>
+            ))}
+          </div>
+
+          {/* ── Sign out ──────────────────────────────────────────────── */}
+          <button
+            onClick={handleSignOut}
+            className="w-full p-4 rounded-2xl flex items-center justify-center gap-2 text-sm font-semibold transition-all hover:brightness-110"
+            style={{
+              background: 'rgba(239,68,68,0.1)',
+              border: '1px solid rgba(239,68,68,0.3)',
+              color: '#f87171',
+            }}
+          >
+            <LogOut size={16} />
+            Đăng xuất
+          </button>
+
+          <p className="text-center text-xs pb-2" style={{ color: 'var(--color-subtle)' }}>
+            GoodFood v1.0 · Đức Tài · Trà Tân · Xuân Lộc · Ông Đồn · Lâm Đồng
+          </p>
         </div>
-
-        {/* Menu */}
-        <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-          {MENU_ITEMS.map(({ icon: Icon, label, href, color }, i) => (
-            <Link key={href} href={href}
-              className={`flex items-center gap-3 px-4 py-3.5 hover:bg-gray-50 transition-colors ${i < MENU_ITEMS.length - 1 ? 'border-b border-gray-50' : ''}`}>
-              <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${color}`}>
-                <Icon size={18} />
-              </div>
-              <span className="flex-1 text-sm font-medium text-gray-900">{label}</span>
-              <ChevronRight size={16} className="text-gray-400" />
-            </Link>
-          ))}
-        </div>
-
-        <button
-          onClick={handleSignOut}
-          className="w-full bg-white rounded-2xl border border-gray-100 p-4 flex items-center justify-center gap-2 text-red-500 font-medium hover:bg-red-50 transition-colors"
-        >
-          <LogOut size={18} /> Đăng xuất
-        </button>
-
-        <p className="text-center text-xs text-gray-400 pb-2">
-          GoodFood v1.0 · Phục vụ khu vực Đức Tài · Trà Tân · Xuân Lộc · Ông Đồn · Lâm Đồng
-        </p>
-      </div>
       </div>
       <BottomNav />
     </div>

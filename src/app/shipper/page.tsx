@@ -188,7 +188,7 @@ export default function ShipperPage() {
         .maybeSingle()
 
       if (data) {
-        setActiveOrder(data as ActiveOrder)
+        setActiveOrder(data as unknown as ActiveOrder)
         setShipperStatus('online')
       }
 
@@ -202,7 +202,7 @@ export default function ShipperPage() {
         .gte('created_at', today.toISOString())
 
       if (done) {
-        setTodayEarnings(done.reduce((s, o) => s + o.delivery_fee, 0))
+        setTodayEarnings(done.reduce((s, o) => s + (o.delivery_fee ?? 0), 0))
         setTodayCount(done.length)
       }
     }
@@ -226,7 +226,7 @@ export default function ShipperPage() {
         .is('driver_id', null)
         .order('created_at', { ascending: false })
 
-      setAvailable((data as AvailableOrder[]) || [])
+      setAvailable((data as unknown as AvailableOrder[]) || [])
     }
 
     load()
