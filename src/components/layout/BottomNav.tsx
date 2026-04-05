@@ -38,7 +38,7 @@ export function BottomNav() {
                 /* Active pill — mở rộng có label */
                 <div
                   className="flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-semibold transition-all"
-                  style={{ background: 'var(--color-gold)', color: '#0f0f13' }}
+                  style={{ background: 'var(--color-gold)', color: '#080c14' }}
                 >
                   <Icon size={16} strokeWidth={2.5} />
                   <span className="text-xs font-bold">{label}</span>
@@ -54,7 +54,7 @@ export function BottomNav() {
                   {isCart && cartCount > 0 && (
                     <span
                       className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 rounded-full flex items-center justify-center text-[9px] font-bold px-1"
-                      style={{ background: 'var(--color-gold)', color: '#0f0f13' }}
+                      style={{ background: 'var(--color-gold)', color: '#080c14' }}
                     >
                       {cartCount > 9 ? '9+' : cartCount}
                     </span>

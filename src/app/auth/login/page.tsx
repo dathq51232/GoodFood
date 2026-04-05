@@ -36,13 +36,13 @@ function LoginContent() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background: #0f0f13 !important; }
+        body { background: #080c14 !important; }
         .login-root {
           min-height: 100vh;
           display: flex;
           align-items: center;
           justify-content: center;
-          background: #0f0f13;
+          background: #080c14;
           font-family: 'Be Vietnam Pro', Inter, sans-serif;
           -webkit-font-smoothing: antialiased;
           padding: 20px;
@@ -53,8 +53,8 @@ function LoginContent() {
         .login-title { font-size: 26px; font-weight: 900; letter-spacing: -1px; color: #e6eaf4; }
         .login-sub { font-size: 13px; color: #445570; margin-top: 4px; }
         .login-card {
-          background: #1a1a24;
-          border: 1.5px solid #2a2a38;
+          background: #0e1520;
+          border: 1.5px solid #1a2a40;
           border-radius: 26px;
           padding: 28px 24px 32px;
           box-shadow: 0 20px 60px rgba(0,0,0,0.6);
@@ -63,8 +63,8 @@ function LoginContent() {
         .login-card-sub { font-size: 13px; color: #8496b5; text-align: center; margin-bottom: 24px; }
         .google-btn {
           width: 100%;
-          background: #0f0f13;
-          border: 1.5px solid #2a2a38;
+          background: #080c14;
+          border: 1.5px solid #1a2a40;
           border-radius: 14px;
           padding: 15px 0;
           color: #e6eaf4;
@@ -78,7 +78,7 @@ function LoginContent() {
           cursor: pointer;
           transition: all 0.2s;
         }
-        .google-btn:hover:not(:disabled) { background: #1a1a24; border-color: #d4a843; }
+        .google-btn:hover:not(:disabled) { background: #0e1520; border-color: #f0b429; }
         .google-btn:disabled { opacity: 0.6; cursor: not-allowed; }
         .divider { display: flex; align-items: center; gap: 12; margin: 20px 0; }
         .divider-line { height: 1px; flex: 1; background: #1a2a40; }
@@ -141,7 +141,7 @@ function LoginContent() {
 
           <div className="footer-text">
             Bằng cách tiếp tục, bạn đồng ý với<br />
-            <span style={{ color: '#d4a843', fontWeight: 700 }}>Điều khoản dịch vụ</span> của GoodFood
+            <span style={{ color: '#f0b429', fontWeight: 700 }}>Điều khoản dịch vụ</span> của GoodFood
           </div>
         </div>
 

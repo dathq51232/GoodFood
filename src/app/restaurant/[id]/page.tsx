@@ -67,14 +67,14 @@ export default function RestaurantPage({ params }: { params: Promise<{ id: strin
         {/* Gradient fade bottom */}
         <div
           className="absolute inset-0"
-          style={{ background: 'linear-gradient(to bottom, rgba(15,15,19,0.3) 0%, rgba(15,15,19,0.85) 100%)' }}
+          style={{ background: 'linear-gradient(to bottom, rgba(8,12,20,0.3) 0%, rgba(8,12,20,0.85) 100%)' }}
         />
 
         {/* Back button */}
         <Link
           href="/"
           className="absolute top-4 left-4 w-9 h-9 rounded-full flex items-center justify-center"
-          style={{ background: 'rgba(15,15,19,0.7)', border: '1px solid var(--color-border)' }}
+          style={{ background: 'rgba(8,12,20,0.7)', border: '1px solid var(--color-border)' }}
         >
           <ArrowLeft size={18} color="white" />
         </Link>
@@ -85,9 +85,9 @@ export default function RestaurantPage({ params }: { params: Promise<{ id: strin
             <span
               className="text-xs font-bold px-2 py-0.5 rounded-full"
               style={{
-                background: restaurant.is_open ? 'rgba(212,168,67,0.2)' : 'rgba(255,255,255,0.1)',
+                background: restaurant.is_open ? 'rgba(240,180,41,0.2)' : 'rgba(255,255,255,0.1)',
                 color: restaurant.is_open ? 'var(--color-gold)' : 'var(--color-muted)',
-                border: `1px solid ${restaurant.is_open ? 'rgba(212,168,67,0.4)' : 'var(--color-border)'}`,
+                border: `1px solid ${restaurant.is_open ? 'rgba(240,180,41,0.4)' : 'var(--color-border)'}`,
               }}
             >
               {restaurant.is_open ? `● Đang mở · ${restaurant.open_time}–${restaurant.close_time}` : '● Đã đóng cửa'}
@@ -126,7 +126,7 @@ export default function RestaurantPage({ params }: { params: Promise<{ id: strin
         {isDifferentRestaurant && (
           <div
             className="flex items-start gap-2 p-3 rounded-xl mb-3 text-xs"
-            style={{ background: 'rgba(212,168,67,0.1)', border: '1px solid rgba(212,168,67,0.3)', color: 'var(--color-gold)' }}
+            style={{ background: 'rgba(240,180,41,0.1)', border: '1px solid rgba(240,180,41,0.3)', color: 'var(--color-gold)' }}
           >
             <Info size={14} className="flex-shrink-0 mt-0.5" />
             <p>Giỏ hàng đang có món từ <b>{cartRestaurant.name}</b>. Thêm món sẽ xoá giỏ hàng cũ.</p>
@@ -143,7 +143,7 @@ export default function RestaurantPage({ params }: { params: Promise<{ id: strin
                 className="flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition-all"
                 style={{
                   background: activeCategory === cat ? 'var(--color-gold)' : 'var(--color-surface)',
-                  color: activeCategory === cat ? '#0f0f13' : 'var(--color-muted)',
+                  color: activeCategory === cat ? '#080c14' : 'var(--color-muted)',
                   border: `1px solid ${activeCategory === cat ? 'var(--color-gold)' : 'var(--color-border)'}`,
                 }}
               >
@@ -193,7 +193,7 @@ export default function RestaurantPage({ params }: { params: Promise<{ id: strin
             className="flex items-center justify-between p-4 rounded-2xl transition-opacity hover:opacity-90"
             style={{
               background: 'linear-gradient(135deg, var(--color-gold-dark), var(--color-gold))',
-              boxShadow: '0 8px 24px rgba(212,168,67,0.4)',
+              boxShadow: '0 8px 24px rgba(240,180,41,0.4)',
             }}
           >
             <div className="flex items-center gap-3">
@@ -203,9 +203,9 @@ export default function RestaurantPage({ params }: { params: Promise<{ id: strin
               >
                 {cartCount}
               </div>
-              <span className="font-bold text-sm" style={{ color: '#0f0f13' }}>Xem giỏ hàng</span>
+              <span className="font-bold text-sm" style={{ color: '#080c14' }}>Xem giỏ hàng</span>
             </div>
-            <span className="font-black text-sm" style={{ color: '#0f0f13' }}>
+            <span className="font-black text-sm" style={{ color: '#080c14' }}>
               {formatCurrency(cartTotal)} →
             </span>
           </Link>
@@ -224,7 +224,7 @@ function FeaturedMenuItemCard({ item, quantity, onAdd, onDecrease }: {
       className="rounded-2xl p-4 flex gap-3 items-center"
       style={{
         background: 'linear-gradient(135deg, var(--color-surface) 0%, var(--color-surface-2) 100%)',
-        border: '1px solid rgba(212,168,67,0.25)',
+        border: '1px solid rgba(240,180,41,0.25)',
       }}
     >
       {/* Image */}
@@ -243,7 +243,7 @@ function FeaturedMenuItemCard({ item, quantity, onAdd, onDecrease }: {
         {/* Badge */}
         <span
           className="inline-block text-[9px] font-black px-2 py-0.5 rounded-full mb-2"
-          style={{ background: 'var(--color-gold)', color: '#0f0f13', letterSpacing: '0.05em' }}
+          style={{ background: 'var(--color-gold)', color: '#080c14', letterSpacing: '0.05em' }}
         >
           BÁN CHẠY
         </span>
@@ -277,7 +277,7 @@ function FeaturedMenuItemCard({ item, quantity, onAdd, onDecrease }: {
         <button
           onClick={onAdd}
           className="w-8 h-8 rounded-lg flex items-center justify-center transition-opacity hover:opacity-80"
-          style={{ background: 'var(--color-gold)', color: '#0f0f13' }}
+          style={{ background: 'var(--color-gold)', color: '#080c14' }}
         >
           <Plus size={15} />
         </button>
@@ -338,7 +338,7 @@ function MenuItemCard({ item, quantity, onAdd, onDecrease }: {
         <button
           onClick={onAdd}
           className="w-7 h-7 rounded-lg flex items-center justify-center transition-opacity hover:opacity-80"
-          style={{ background: 'var(--color-gold)', color: '#0f0f13' }}
+          style={{ background: 'var(--color-gold)', color: '#080c14' }}
         >
           <Plus size={13} />
         </button>

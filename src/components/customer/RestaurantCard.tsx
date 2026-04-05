@@ -41,9 +41,9 @@ export function RestaurantCard({ restaurant }: { restaurant: Restaurant }) {
           {/* Rating badge */}
           <div
             className="absolute top-2 right-2 flex items-center gap-1 px-1.5 py-0.5 rounded-full text-xs font-bold"
-            style={{ background: 'var(--color-gold)', color: '#0f0f13' }}
+            style={{ background: 'var(--color-gold)', color: '#080c14' }}
           >
-            <Star size={10} fill="#0f0f13" strokeWidth={0} />
+            <Star size={10} fill="#080c14" strokeWidth={0} />
             <span>{restaurant.rating}</span>
           </div>
         </div>

@@ -47,7 +47,7 @@ export function ServiceAreaMap() {
           [11.240, 107.745],
           [11.240, 107.660],
         ],
-        { color: '#d4a843', fillColor: '#d4a843', fillOpacity: 0.12, weight: 2.5 }
+        { color: '#f0b429', fillColor: '#f0b429', fillOpacity: 0.12, weight: 2.5 }
       ).addTo(map)
 
       // Village markers — tọa độ thực tế Đức Linh, Bình Thuận
@@ -60,7 +60,7 @@ export function ServiceAreaMap() {
 
       villages.forEach(([lat, lng, name, icon]) => {
         const divIcon = L.divIcon({
-          html: `<div style="background:#1a1a24;border:2px solid #d4a843;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:0 2px 8px rgba(0,0,0,0.5)">${icon}</div>`,
+          html: `<div style="background:#0e1520;border:2px solid #f0b429;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:0 2px 8px rgba(0,0,0,0.5)">${icon}</div>`,
           iconSize: [28, 28],
           iconAnchor: [14, 14],
           className: '',
@@ -89,7 +89,7 @@ export function ServiceAreaMap() {
       <div ref={mapRef} style={{ height: '100%', width: '100%' }} />
       <div
         className="absolute top-2 left-2 text-xs font-semibold px-2.5 py-1 rounded-full"
-        style={{ background: 'rgba(15,15,19,0.85)', color: 'var(--color-gold)', border: '1px solid var(--color-border)' }}
+        style={{ background: 'rgba(8,12,20,0.85)', color: 'var(--color-gold)', border: '1px solid var(--color-border)' }}
       >
         📍 Đức Linh · Lâm Đồng
       </div>

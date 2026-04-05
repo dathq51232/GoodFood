@@ -20,7 +20,7 @@ interface OrderRow {
 // Dark-friendly status colors
 function statusStyle(status: string): { bg: string; color: string } {
   switch (status) {
-    case 'pending':    return { bg: 'rgba(212,168,67,0.15)',  color: '#d4a843' }
+    case 'pending':    return { bg: 'rgba(240,180,41,0.15)',  color: '#f0b429' }
     case 'confirmed':  return { bg: 'rgba(34,197,94,0.15)',   color: '#22c55e' }
     case 'preparing':  return { bg: 'rgba(59,130,246,0.15)',  color: '#60a5fa' }
     case 'delivering': return { bg: 'rgba(168,85,247,0.15)',  color: '#c084fc' }
@@ -70,7 +70,7 @@ export default function OrdersPage() {
             <Link
               href="/"
               className="mt-4 inline-block text-sm font-bold px-5 py-2 rounded-full"
-              style={{ background: 'var(--color-gold)', color: '#0f0f13' }}
+              style={{ background: 'var(--color-gold)', color: '#080c14' }}
             >
               Đặt ngay
             </Link>

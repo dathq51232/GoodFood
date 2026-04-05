@@ -48,7 +48,7 @@ export default function CheckoutPage() {
         <Link
           href="/"
           className="font-bold text-sm px-5 py-2 rounded-full"
-          style={{ background: 'var(--color-gold)', color: '#0f0f13' }}
+          style={{ background: 'var(--color-gold)', color: '#080c14' }}
         >
           Quay lại đặt đồ
         </Link>
@@ -156,7 +156,7 @@ export default function CheckoutPage() {
           {!user && (
             <div
               className="flex items-center gap-2 p-3 rounded-xl text-sm"
-              style={{ background: 'rgba(212,168,67,0.1)', border: '1px solid rgba(212,168,67,0.3)', color: 'var(--color-gold)' }}
+              style={{ background: 'rgba(240,180,41,0.1)', border: '1px solid rgba(240,180,41,0.3)', color: 'var(--color-gold)' }}
             >
               <AlertCircle size={16} className="flex-shrink-0" />
               <p>
@@ -217,7 +217,7 @@ export default function CheckoutPage() {
                     <button
                       onClick={() => updateQuantity(menu_item.id, quantity + 1)}
                       className="w-7 h-7 rounded-lg flex items-center justify-center"
-                      style={{ background: 'var(--color-gold)', color: '#0f0f13' }}
+                      style={{ background: 'var(--color-gold)', color: '#080c14' }}
                     >
                       <Plus size={12} />
                     </button>
@@ -248,7 +248,7 @@ export default function CheckoutPage() {
                 onClick={() => setPayMethod('cash')}
                 className="flex items-center gap-2 p-3 rounded-xl transition-all"
                 style={{
-                  background: payMethod === 'cash' ? 'rgba(212,168,67,0.15)' : 'var(--color-surface-2)',
+                  background: payMethod === 'cash' ? 'rgba(240,180,41,0.15)' : 'var(--color-surface-2)',
                   border: `1px solid ${payMethod === 'cash' ? 'var(--color-gold)' : 'var(--color-border)'}`,
                 }}
               >
@@ -261,7 +261,7 @@ export default function CheckoutPage() {
                 onClick={() => setPayMethod('transfer')}
                 className="flex flex-col items-start gap-1 p-3 rounded-xl transition-all"
                 style={{
-                  background: payMethod === 'transfer' ? 'rgba(212,168,67,0.15)' : 'var(--color-surface-2)',
+                  background: payMethod === 'transfer' ? 'rgba(240,180,41,0.15)' : 'var(--color-surface-2)',
                   border: `1px solid ${payMethod === 'transfer' ? 'var(--color-gold)' : 'var(--color-border)'}`,
                 }}
               >
@@ -273,7 +273,7 @@ export default function CheckoutPage() {
                 </div>
                 <span
                   className="text-[9px] font-black px-1.5 py-0.5 rounded-full ml-6"
-                  style={{ background: 'rgba(212,168,67,0.2)', color: 'var(--color-gold)' }}
+                  style={{ background: 'rgba(240,180,41,0.2)', color: 'var(--color-gold)' }}
                 >
                   QR · SePay
                 </span>

@@ -11,7 +11,7 @@ import { createClient } from '@/lib/supabase/client'
 const MENU_ITEMS = [
   { icon: MapPin,     label: 'Địa chỉ của tôi',             href: '/profile/addresses', accent: '#f87171' },
   { icon: Phone,      label: 'Thay đổi số điện thoại',       href: '/auth/login',        accent: '#60a5fa' },
-  { icon: Store,      label: 'Đăng ký nhà hàng / cửa hàng', href: '/restaurant-admin',  accent: '#d4a843' },
+  { icon: Store,      label: 'Đăng ký nhà hàng / cửa hàng', href: '/restaurant-admin',  accent: '#f0b429' },
   { icon: Bike,       label: 'Đăng ký làm shipper',          href: '/shipper',           accent: '#34d399' },
   { icon: Settings,   label: 'Cài đặt',                      href: '/settings',          accent: '#888888' },
 ]
@@ -45,8 +45,8 @@ export default function ProfilePage() {
           <div
             className="rounded-2xl p-6 flex items-center gap-4 relative overflow-hidden"
             style={{
-              background: 'linear-gradient(135deg, #1a1408 0%, #2d2408 50%, #1a1a24 100%)',
-              border: '1px solid rgba(212,168,67,0.3)',
+              background: 'linear-gradient(135deg, #1a1408 0%, #2d2408 50%, #0e1520 100%)',
+              border: '1px solid rgba(240,180,41,0.3)',
             }}
           >
             {/* Background decoration */}
@@ -59,7 +59,7 @@ export default function ProfilePage() {
 
             <div
               className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0"
-              style={{ background: 'rgba(212,168,67,0.15)', border: '1px solid rgba(212,168,67,0.3)' }}
+              style={{ background: 'rgba(240,180,41,0.15)', border: '1px solid rgba(240,180,41,0.3)' }}
             >
               👤
             </div>

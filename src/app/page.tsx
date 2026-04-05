@@ -65,7 +65,7 @@ export default function HomePage() {
             className="rounded-2xl p-5 relative overflow-hidden"
             style={{
               background: 'linear-gradient(135deg, #1a1408 0%, #2d2408 50%, #1a1810 100%)',
-              border: '1px solid rgba(212,168,67,0.2)',
+              border: '1px solid rgba(240,180,41,0.2)',
             }}
           >
             {/* Background scooter icon */}
@@ -90,7 +90,7 @@ export default function HomePage() {
             <Link
               href="#restaurants"
               className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-opacity hover:opacity-90"
-              style={{ background: 'var(--color-gold)', color: '#0f0f13' }}
+              style={{ background: 'var(--color-gold)', color: '#080c14' }}
             >
               Đặt ngay →
             </Link>
@@ -126,7 +126,7 @@ export default function HomePage() {
                       style={{
                         background: active ? 'var(--color-gold)' : 'var(--color-surface)',
                         border: `1px solid ${active ? 'var(--color-gold)' : 'var(--color-border)'}`,
-                        boxShadow: active ? '0 4px 16px rgba(212,168,67,0.3)' : 'none',
+                        boxShadow: active ? '0 4px 16px rgba(240,180,41,0.3)' : 'none',
                       }}
                     >
                       {cat.icon}
@@ -151,7 +151,7 @@ export default function HomePage() {
                   style={{
                     background: category === 'all' ? 'var(--color-gold)' : 'var(--color-surface)',
                     border: `1px solid ${category === 'all' ? 'var(--color-gold)' : 'var(--color-border)'}`,
-                    boxShadow: category === 'all' ? '0 4px 16px rgba(212,168,67,0.3)' : 'none',
+                    boxShadow: category === 'all' ? '0 4px 16px rgba(240,180,41,0.3)' : 'none',
                   }}
                 >
                   🍽️
@@ -213,7 +213,7 @@ export default function HomePage() {
           >
             <div
               className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0"
-              style={{ background: 'rgba(212,168,67,0.15)' }}
+              style={{ background: 'rgba(240,180,41,0.15)' }}
             >
               📦
             </div>
