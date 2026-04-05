@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, User, Phone, Shield, Bell, ChevronRight, Check } from 'lucide-react'
+import { ArrowLeft, User, Phone, Shield, Bell, Check } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useAuthStore } from '@/store/auth'
 import { Button } from '@/components/ui/button'
@@ -56,24 +56,33 @@ export default function SettingsPage() {
   if (!user) return null
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen pb-28" style={{ background: 'var(--color-bg)' }}>
       <DesktopNav />
       <div className="md:pl-56">
         <div className="max-w-2xl mx-auto">
+
           {/* Header */}
-          <div className="bg-white border-b border-gray-100 px-4 pt-12 pb-4 flex items-center gap-3">
-            <button onClick={() => router.back()} className="p-1.5 rounded-full hover:bg-gray-100">
-              <ArrowLeft size={20} className="text-gray-700" />
+          <div className="px-4 pt-12 pb-4 flex items-center gap-3"
+            style={{ borderBottom: '1px solid var(--color-border)' }}>
+            <button
+              onClick={() => router.back()}
+              className="p-1.5 rounded-full transition-colors"
+              style={{ background: 'var(--color-surface-2)' }}
+            >
+              <ArrowLeft size={20} style={{ color: 'var(--color-text)' }} />
             </button>
-            <h1 className="font-bold text-lg text-gray-900">Cài đặt</h1>
+            <h1 className="font-bold text-lg" style={{ color: 'var(--color-text)' }}>Cài đặt</h1>
           </div>
 
           <div className="px-4 pt-4 space-y-4">
+
             {/* Profile section */}
-            <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-              <div className="px-4 py-3 border-b border-gray-50 flex items-center gap-2">
-                <User size={15} className="text-orange-500" />
-                <h2 className="text-sm font-semibold text-gray-900">Thông tin cá nhân</h2>
+            <div className="rounded-2xl overflow-hidden"
+              style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+              <div className="px-4 py-3 flex items-center gap-2"
+                style={{ borderBottom: '1px solid var(--color-border)' }}>
+                <User size={15} style={{ color: 'var(--color-gold)' }} />
+                <h2 className="text-sm font-semibold" style={{ color: 'var(--color-text)' }}>Thông tin cá nhân</h2>
               </div>
               <div className="p-4 space-y-3">
                 <Input
@@ -97,89 +106,76 @@ export default function SettingsPage() {
             </div>
 
             {/* Account info */}
-            <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-              <div className="px-4 py-3 border-b border-gray-50 flex items-center gap-2">
-                <Shield size={15} className="text-blue-500" />
-                <h2 className="text-sm font-semibold text-gray-900">Tài khoản</h2>
+            <div className="rounded-2xl overflow-hidden"
+              style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+              <div className="px-4 py-3 flex items-center gap-2"
+                style={{ borderBottom: '1px solid var(--color-border)' }}>
+                <Shield size={15} style={{ color: '#60a5fa' }} />
+                <h2 className="text-sm font-semibold" style={{ color: 'var(--color-text)' }}>Tài khoản</h2>
               </div>
-              <div className="divide-y divide-gray-50">
+              <div style={{ borderTop: '1px solid var(--color-border)' }}>
                 <div className="px-4 py-3 flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <Phone size={16} className="text-gray-400" />
+                    <Phone size={16} style={{ color: 'var(--color-muted)' }} />
                     <div>
-                      <p className="text-xs text-gray-500">Số điện thoại</p>
-                      <p className="text-sm font-medium text-gray-900">{phone || user.phone || '—'}</p>
+                      <p className="text-xs" style={{ color: 'var(--color-muted)' }}>Số điện thoại</p>
+                      <p className="text-sm font-medium" style={{ color: 'var(--color-text)' }}>
+                        {phone || user.phone || '—'}
+                      </p>
                     </div>
                   </div>
                 </div>
-                <div className="px-4 py-3 flex items-center justify-between">
+                <div className="px-4 py-3 flex items-center justify-between"
+                  style={{ borderTop: '1px solid var(--color-border)' }}>
                   <div className="flex items-center gap-3">
-                    <Shield size={16} className="text-gray-400" />
+                    <Shield size={16} style={{ color: 'var(--color-muted)' }} />
                     <div>
-                      <p className="text-xs text-gray-500">Loại tài khoản</p>
-                      <p className="text-sm font-medium text-gray-900">{roleLabel}</p>
+                      <p className="text-xs" style={{ color: 'var(--color-muted)' }}>Loại tài khoản</p>
+                      <p className="text-sm font-medium" style={{ color: 'var(--color-gold)' }}>{roleLabel}</p>
                     </div>
                   </div>
                 </div>
-                {role !== 'driver' && (
-                  <button
-                    onClick={() => router.push('/shipper')}
-                    className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-green-50 rounded-xl flex items-center justify-center">
-                        <span className="text-sm">🛵</span>
-                      </div>
-                      <p className="text-sm font-medium text-gray-900">Đăng ký làm shipper</p>
-                    </div>
-                    <ChevronRight size={16} className="text-gray-400" />
-                  </button>
-                )}
-                {role !== 'restaurant' && (
-                  <button
-                    onClick={() => router.push('/restaurant-admin')}
-                    className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-orange-50 rounded-xl flex items-center justify-center">
-                        <span className="text-sm">🏪</span>
-                      </div>
-                      <p className="text-sm font-medium text-gray-900">Đăng ký nhà hàng</p>
-                    </div>
-                    <ChevronRight size={16} className="text-gray-400" />
-                  </button>
-                )}
               </div>
             </div>
 
             {/* Notifications */}
-            <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-              <div className="px-4 py-3 border-b border-gray-50 flex items-center gap-2">
-                <Bell size={15} className="text-purple-500" />
-                <h2 className="text-sm font-semibold text-gray-900">Thông báo</h2>
+            <div className="rounded-2xl overflow-hidden"
+              style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)' }}>
+              <div className="px-4 py-3 flex items-center gap-2"
+                style={{ borderBottom: '1px solid var(--color-border)' }}>
+                <Bell size={15} style={{ color: '#c084fc' }} />
+                <h2 className="text-sm font-semibold" style={{ color: 'var(--color-text)' }}>Thông báo</h2>
               </div>
-              <div className="divide-y divide-gray-50">
+              <div>
                 {[
                   { label: 'Cập nhật đơn hàng', desc: 'Thông báo khi trạng thái đơn thay đổi', value: notifOrders, onChange: setNotifOrders },
                   { label: 'Khuyến mãi & ưu đãi', desc: 'Nhận thông báo về ưu đãi mới', value: notifPromo, onChange: setNotifPromo },
-                ].map(({ label, desc, value, onChange }) => (
-                  <div key={label} className="px-4 py-3 flex items-center justify-between">
+                ].map(({ label, desc, value, onChange }, i) => (
+                  <div key={label} className="px-4 py-3 flex items-center justify-between"
+                    style={i > 0 ? { borderTop: '1px solid var(--color-border)' } : {}}>
                     <div>
-                      <p className="text-sm font-medium text-gray-900">{label}</p>
-                      <p className="text-xs text-gray-500 mt-0.5">{desc}</p>
+                      <p className="text-sm font-medium" style={{ color: 'var(--color-text)' }}>{label}</p>
+                      <p className="text-xs mt-0.5" style={{ color: 'var(--color-muted)' }}>{desc}</p>
                     </div>
                     <button
                       onClick={() => onChange(!value)}
-                      className={`relative w-11 h-6 rounded-full transition-colors ${value ? 'bg-orange-500' : 'bg-gray-200'}`}
+                      className="relative w-11 h-6 rounded-full transition-colors"
+                      style={{ background: value ? 'var(--color-gold)' : 'var(--color-surface-2)' }}
                     >
-                      <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${value ? 'translate-x-5' : 'translate-x-0.5'}`} />
+                      <div
+                        className="absolute top-0.5 w-5 h-5 rounded-full shadow transition-transform"
+                        style={{
+                          background: 'white',
+                          transform: value ? 'translateX(20px)' : 'translateX(2px)',
+                        }}
+                      />
                     </button>
                   </div>
                 ))}
               </div>
             </div>
 
-            <p className="text-center text-xs text-gray-400 pb-2">
+            <p className="text-center text-xs pb-2" style={{ color: 'var(--color-subtle)' }}>
               GoodFood v1.0 · Phục vụ khu vực Đức Tài · Trà Tân · Xuân Lộc · Ông Đồn · Lâm Đồng
             </p>
           </div>

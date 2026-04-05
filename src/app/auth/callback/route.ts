@@ -42,7 +42,12 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  const response = NextResponse.redirect(`${origin}${next}`)
+  // Don't redirect to role-registration pages after login — goes to homepage instead
+  // so users don't see registration forms as "forced updates"
+  const SKIP = ['/restaurant-admin', '/shipper', '/settings']
+  const finalNext = SKIP.some((p) => next.startsWith(p)) ? '/' : next
+
+  const response = NextResponse.redirect(`${origin}${finalNext}`)
   response.cookies.delete('oauth_next')
   return response
 }

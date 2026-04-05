@@ -1,9 +1,11 @@
 'use client'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import { Home, ClipboardList, Package, User, Store, Bike } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuthStore } from '@/store/auth'
+import { createClient } from '@/lib/supabase/client'
 
 const mainItems = [
   { href: '/', icon: Home, label: 'Trang chủ' },
@@ -15,12 +17,21 @@ const mainItems = [
 export function DesktopNav() {
   const pathname = usePathname()
   const { user } = useAuthStore()
+  const [role, setRole] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!user) { setRole(null); return }
+    const supabase = createClient()
+    supabase.from('users').select('role').eq('id', user.id).single()
+      .then(({ data }) => setRole(data?.role ?? 'customer'))
+  }, [user])
 
   return (
-    <nav className="hidden md:flex flex-col fixed left-0 top-0 h-full w-56 bg-white border-r border-gray-100 z-40 py-6 px-3">
+    <nav className="hidden md:flex flex-col fixed left-0 top-0 h-full w-56 z-40 py-6 px-3"
+      style={{ background: 'var(--color-surface)', borderRight: '1px solid var(--color-border)' }}>
       <div className="px-3 mb-8">
-        <div className="text-orange-500 font-bold text-lg leading-tight">GoodFood</div>
-        <div className="text-xs text-gray-400 mt-0.5">Giao hàng nhanh · Đức Tài</div>
+        <div className="font-bold text-lg leading-tight" style={{ color: 'var(--color-gold)' }}>GoodFood</div>
+        <div className="text-xs mt-0.5" style={{ color: 'var(--color-muted)' }}>Giao hàng nhanh · Đức Tài</div>
       </div>
 
       <div className="space-y-0.5 flex-1">
@@ -30,10 +41,10 @@ export function DesktopNav() {
             <Link
               key={href}
               href={href}
-              className={cn(
-                'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors',
-                active ? 'bg-orange-50 text-orange-600' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-              )}
+              className={cn('flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors')}
+              style={active
+                ? { background: 'rgba(212,168,67,0.15)', color: 'var(--color-gold)' }
+                : { color: 'var(--color-muted)' }}
             >
               <Icon size={18} strokeWidth={active ? 2.5 : 1.8} />
               {label}
@@ -41,25 +52,32 @@ export function DesktopNav() {
           )
         })}
 
-        {user && (
-          <div className="pt-3 mt-3 border-t border-gray-100 space-y-0.5">
-            <p className="px-3 text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Dành cho bạn</p>
+        {/* Role-specific links — only shown for the right role */}
+        {user && role === 'restaurant' && (
+          <div className="pt-3 mt-3 space-y-0.5" style={{ borderTop: '1px solid var(--color-border)' }}>
+            <p className="px-3 text-[10px] font-semibold uppercase tracking-wider mb-1" style={{ color: 'var(--color-subtle)' }}>Nhà hàng</p>
             <Link
               href="/restaurant-admin"
-              className={cn(
-                'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors',
-                pathname === '/restaurant-admin' ? 'bg-orange-50 text-orange-600' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-              )}
+              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors"
+              style={pathname === '/restaurant-admin'
+                ? { background: 'rgba(212,168,67,0.15)', color: 'var(--color-gold)' }
+                : { color: 'var(--color-muted)' }}
             >
               <Store size={18} strokeWidth={pathname === '/restaurant-admin' ? 2.5 : 1.8} />
               Quản lý quán
             </Link>
+          </div>
+        )}
+
+        {user && role === 'driver' && (
+          <div className="pt-3 mt-3 space-y-0.5" style={{ borderTop: '1px solid var(--color-border)' }}>
+            <p className="px-3 text-[10px] font-semibold uppercase tracking-wider mb-1" style={{ color: 'var(--color-subtle)' }}>Shipper</p>
             <Link
               href="/shipper"
-              className={cn(
-                'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors',
-                pathname === '/shipper' ? 'bg-orange-50 text-orange-600' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-              )}
+              className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors"
+              style={pathname === '/shipper'
+                ? { background: 'rgba(212,168,67,0.15)', color: 'var(--color-gold)' }
+                : { color: 'var(--color-muted)' }}
             >
               <Bike size={18} strokeWidth={pathname === '/shipper' ? 2.5 : 1.8} />
               Khu vực shipper
@@ -68,7 +86,7 @@ export function DesktopNav() {
         )}
       </div>
 
-      <div className="px-3 text-[11px] text-gray-400">v1.0 · Đức Tài · Trà Tân · Xuân Lộc · Ông Đồn · Lâm Đồng</div>
+      <div className="px-3 text-[11px]" style={{ color: 'var(--color-subtle)' }}>v1.0 · Đức Tài · Trà Tân · Xuân Lộc · Ông Đồn · Lâm Đồng</div>
     </nav>
   )
 }

@@ -72,8 +72,8 @@ function RestaurantRegisterForm({
         is_open: false,
         open_time: '07:00',
         close_time: '22:00',
-        lat: 21.05,
-        lng: 105.77,
+        lat: 11.28,
+        lng: 107.70,
         rating: 0,
         total_reviews: 0,
       })
@@ -99,7 +99,7 @@ function RestaurantRegisterForm({
         <div className="bg-white rounded-2xl border border-gray-100 p-4 space-y-3">
           <h2 className="font-semibold text-sm text-gray-700">Thông tin cơ bản</h2>
           <Input label="Tên nhà hàng *" placeholder="Quán Phở Bà Năm" value={form.name} onChange={(e) => set('name', e.target.value)} />
-          <Input label="Địa chỉ *" placeholder="123 Đường Hoài Đức, Hà Nội" value={form.address} onChange={(e) => set('address', e.target.value)} />
+          <Input label="Địa chỉ *" placeholder="Thôn Đức Tài, Đức Linh, Lâm Đồng" value={form.address} onChange={(e) => set('address', e.target.value)} />
           <Input label="Số điện thoại *" type="tel" placeholder="0912 345 678" value={form.phone} onChange={(e) => set('phone', e.target.value)} />
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">Danh mục</label>
